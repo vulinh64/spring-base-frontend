@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+body {
+  font-family: "Noto Sans", "Noto Color Emoji", sans-serif;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+code, pre code, kbd {
+  font-family: "JetBrains Mono", monospace;
+  line-height: 2;
+}
+
+.prose details {
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prose details:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.prose details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #d1d5db;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.prose details[open] summary {
+  border-bottom: 1px solid #374151;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose details:hover summary {
+  color: #93c5fd;
+}
+
+.prose details[open]:hover summary {
+  border-bottom-color: #3b82f6;
+}
+
+/* GitHub-style alerts */
+.markdown-alert {
+  border: 1px solid #374151;
+  border-left: 0.25em solid #30363d;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1em;
+  margin: 1.5rem 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.markdown-alert > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-alert .markdown-alert-title svg.octicon {
+  margin-right: 0.5rem;
+  fill: currentColor;
+}
+
+.markdown-alert-note {
+  border-left-color: #1f6feb;
+}
+.markdown-alert-note:hover {
+  border-color: #1f6feb;
+}
+.markdown-alert-note .markdown-alert-title {
+  color: #58a6ff;
+}
+
+.markdown-alert-tip {
+  border-left-color: #238636;
+}
+.markdown-alert-tip:hover {
+  border-color: #238636;
+}
+.markdown-alert-tip .markdown-alert-title {
+  color: #3fb950;
+}
+
+.markdown-alert-important {
+  border-left-color: #8957e5;
+}
+.markdown-alert-important:hover {
+  border-color: #8957e5;
+}
+.markdown-alert-important .markdown-alert-title {
+  color: #a371f7;
+}
+
+.markdown-alert-warning {
+  border-left-color: #9e6a03;
+}
+.markdown-alert-warning:hover {
+  border-color: #9e6a03;
+}
+.markdown-alert-warning .markdown-alert-title {
+  color: #d29922;
+}
+
+.markdown-alert-caution {
+  border-left-color: #da3633;
+}
+.markdown-alert-caution:hover {
+  border-color: #da3633;
+}
+.markdown-alert-caution .markdown-alert-title {
+  color: #f85149;
+}
+
+/* Code block wrapper */
+.code-block-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.code-block-wrapper pre {
+  margin: 0;
+  border-radius: 0;
+}
+
+.code-block-wrapper pre.code-wrap,
+.code-block-wrapper pre.code-wrap code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

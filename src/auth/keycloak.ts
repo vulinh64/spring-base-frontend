@@ -12,3 +12,7 @@ export async function login(username: string, password: string): Promise<void> {
 export async function logout(): Promise<void> {
   await authClient.post("/logout");
 }
+
+export async function refresh(): Promise<void> {
+  await authClient.post("/refresh");
+}

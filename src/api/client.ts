@@ -1,5 +1,12 @@
 import axios from "axios";
 import type { GenericResponse } from "@/types";
+import { refresh } from "@/auth/keycloak";
+
+declare module "axios" {
+  interface InternalAxiosRequestConfig {
+    _retried?: boolean;
+  }
+}
 
 const apiClient = axios.create({
   baseURL: "/api",
@@ -15,6 +22,19 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
+      const originalRequest = error.config;
+
+      // Attempt token refresh once before giving up
+      if (originalRequest && !originalRequest._retried) {
+        originalRequest._retried = true;
+        try {
+          await refresh();
+          return apiClient(originalRequest);
+        } catch {
+          // Refresh failed — session is truly expired
+        }
+      }
+
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("session-expired"));
 

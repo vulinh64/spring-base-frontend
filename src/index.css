@@ -40,7 +40,23 @@ body {
 
 code, pre code, kbd {
   font-family: "JetBrains Mono", monospace;
+}
+
+pre code {
   line-height: 2;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose :not(pre) > code,
+.prose details summary code {
+  color: #f87171;
+  background-color: #1f2937;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
 }
 
 .prose details {
@@ -59,7 +75,7 @@ code, pre code, kbd {
   cursor: pointer;
   font-weight: 600;
   color: #d1d5db;
-  transition: border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s;
 }
 
 .prose details[open] summary {
@@ -68,9 +84,6 @@ code, pre code, kbd {
   margin-bottom: 0.5rem;
 }
 
-.prose details:hover summary {
-  color: #93c5fd;
-}
 
 .prose details[open]:hover summary {
   border-bottom-color: #3b82f6;

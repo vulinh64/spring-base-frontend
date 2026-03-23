@@ -9,7 +9,7 @@ import { ErrorBanner } from "@/components/common/ErrorBanner";
 export function CategoryPostsPage() {
   const { slug } = useParams<{ slug: string }>();
   const [page, setPage] = useState(0);
-  const { data, isLoading, error } = usePostsByCategory(slug!, { page, size: 10 });
+  const { data, isLoading, error } = usePostsByCategory(slug!, { page, size: 10, sort: ["createdDateTime,desc", "updatedDateTime,desc"] });
 
   const totalElements = data?.page.totalElements ?? 0;
   const categoryName = data?.content[0]?.category?.displayName ?? slug;

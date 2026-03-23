@@ -22,17 +22,21 @@ export function CommentList({ postId, commentCount }: CommentListProps) {
 
   if (!open) {
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="text-sm text-gray-400 hover:text-gray-200 transition-colors"
-      >
-        Comments ({displayCount})
-      </button>
+      <div>
+        <h2 className="text-xl font-bold text-gray-100 mb-3">Comments</h2>
+        <button
+          onClick={() => setOpen(true)}
+          className="text-sm text-gray-400 hover:text-gray-200 transition-colors"
+        >
+          Show Comments ({displayCount})
+        </button>
+      </div>
     );
   }
 
   return (
     <div>
+      <h2 className="text-xl font-bold text-gray-100 mb-3">Comments</h2>
       <button
         onClick={() => setOpen(false)}
         className="text-sm text-gray-400 hover:text-gray-200 transition-colors mb-4"

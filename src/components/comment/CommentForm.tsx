@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type SubmitEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { commentApi } from "@/api";
 import { useSessionDraft } from "@/hooks/useSessionDraft";
@@ -35,7 +35,7 @@ export function CommentForm({ postId }: CommentFormProps) {
     onError: () => toast.error("Failed to post comment."),
   });
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     if (!content.trim()) return;
     mutate();
@@ -73,7 +73,7 @@ export function CommentForm({ postId }: CommentFormProps) {
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write a comment... (Markdown supported)"
           rows={3}
-          className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-['JetBrains_Mono']"
         />
       )}
       <div className="mt-2 flex justify-end">

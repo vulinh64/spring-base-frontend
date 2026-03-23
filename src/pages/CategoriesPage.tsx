@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCategories } from "@/hooks/useCategories";
@@ -13,8 +13,6 @@ import { useToast } from "@/components/common/Toast";
 
 export function CategoriesPage() {
   const [page, setPage] = useState(0);
-  const [search, setSearch] = useState("");
-  const [query, setQuery] = useState("");
   const [newName, setNewName] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -23,11 +21,7 @@ export function CategoriesPage() {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { data, isLoading, error } = useCategories({
-    displayName: query || undefined,
-    page,
-    size: 10,
-  });
+  const { data, isLoading, error } = useCategories({ page, size: 10 });
 
   const createMutation = useMutation({
     mutationFn: () => categoryApi.create({ displayName: newName }),
@@ -49,13 +43,7 @@ export function CategoriesPage() {
     onError: () => toast.error("Failed to delete category."),
   });
 
-  function handleSearch(e: FormEvent) {
-    e.preventDefault();
-    setQuery(search);
-    setPage(0);
-  }
-
-  function handleCreate(e: FormEvent) {
+  function handleCreate(e: SubmitEvent) {
     e.preventDefault();
     if (!newName.trim()) return;
     createMutation.mutate();
@@ -83,22 +71,6 @@ export function CategoriesPage() {
           </button>
         </form>
       )}
-
-      <form onSubmit={handleSearch} className="mb-6 flex gap-2">
-        <input
-          type="text"
-          placeholder="Search categories..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <button
-          type="submit"
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Search
-        </button>
-      </form>
 
       {isLoading && <LoadingSpinner />}
       {error && <ErrorBanner message="Failed to load categories." />}

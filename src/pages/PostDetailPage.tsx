@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { usePost } from "@/hooks/usePosts";
@@ -7,6 +7,7 @@ import { postApi, subscriptionApi } from "@/api";
 import { CommentList } from "@/components/comment/CommentList";
 import { CategoryBadge } from "@/components/category/CategoryBadge";
 import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
+import { TableOfContents } from "@/components/common/TableOfContents";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ErrorBanner } from "@/components/common/ErrorBanner";
@@ -42,6 +43,11 @@ export function PostDetailPage() {
     onError: () => toast.error("Failed to follow author."),
   });
 
+  const headings = useMemo(() => {
+    if (!post?.postContent) return [];
+    return [...post.postContent.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
+  }, [post?.postContent]);
+
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorBanner message="Failed to load post." />;
   if (!post) return <ErrorBanner message="Post not found." />;
@@ -49,7 +55,8 @@ export function PostDetailPage() {
   const isAuthor = authenticated && userId === post.authorId;
 
   return (
-    <article>
+    <div className="flex gap-10">
+    <article className="min-w-0 flex-1">
       {/* Header */}
       <header className="mb-8">
         <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
@@ -154,5 +161,12 @@ export function PostDetailPage() {
         />
       )}
     </article>
+
+    {headings.length > 0 && (
+      <aside className="hidden lg:block w-52 shrink-0">
+        <TableOfContents headings={headings} />
+      </aside>
+    )}
+    </div>
   );
 }

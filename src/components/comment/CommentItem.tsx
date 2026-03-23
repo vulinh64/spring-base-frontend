@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, useRef, type SubmitEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { SingleCommentResponse } from "@/types";
 import { commentApi } from "@/api";
+import { useAuth } from "@/auth/AuthProvider";
 import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
 import { formatDateTime } from "@/utils/date";
 
@@ -11,10 +12,21 @@ interface CommentItemProps {
 }
 
 export function CommentItem({ comment, postId }: CommentItemProps) {
+  const { authenticated, userId } = useAuth();
+  const canEdit = authenticated && comment.author !== null && comment.author.id === userId;
   const [editing, setEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
   const [previewing, setPreviewing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setOverflows(contentRef.current.scrollHeight > contentRef.current.clientHeight);
+    }
+  }, [comment.content]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: () => commentApi.edit(comment.id, { content }),
@@ -25,7 +37,7 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
     },
   });
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     if (!content.trim()) return;
     mutate();
@@ -60,7 +72,7 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={3}
-              className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-['JetBrains_Mono']"
             />
           )}
           <div className="mt-2 flex gap-2 justify-end">
@@ -86,24 +98,38 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
         </form>
       ) : (
         <>
-          <div className="text-sm text-gray-300 prose prose-sm prose-invert max-w-none">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="text-xs text-gray-400">
+              On <time>{formatDateTime(comment.createdDateTime)}</time>
+              {comment.author && (
+                <>, user <span className="font-medium text-gray-200" title={comment.author.email}>{comment.author.username}</span></>
+              )}{" "}wrote:
+              {comment.isEdited && <span className="italic text-gray-500 ml-1">(edited)</span>}
+            </p>
+            {canEdit && (
+              <button
+                onClick={() => setEditing(true)}
+                className="shrink-0 text-xs text-gray-500 hover:text-gray-300"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          <hr className="border-gray-700 mt-2" />
+          <div
+            ref={contentRef}
+            className={`mt-3 text-sm text-gray-300 prose prose-sm prose-invert max-w-none overflow-hidden transition-[max-height] duration-300 ${expanded ? "max-h-none" : "max-h-12"}`}
+          >
             <MarkdownRenderer content={comment.content} />
           </div>
-          <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
-            {comment.author && (
-              <span title={comment.author.email} className="font-medium text-gray-400">
-                {comment.author.username}
-              </span>
-            )}
-            <time>{formatDateTime(comment.createdDateTime)}</time>
-            {comment.isEdited && <span className="italic">(edited)</span>}
+          {overflows && !expanded && (
             <button
-              onClick={() => setEditing(true)}
-              className="text-gray-500 hover:text-gray-300"
+              onClick={() => setExpanded(true)}
+              className="mt-4 text-xs text-blue-400 hover:text-blue-300"
             >
-              Edit
+              Show more...
             </button>
-          </div>
+          )}
         </>
       )}
     </div>

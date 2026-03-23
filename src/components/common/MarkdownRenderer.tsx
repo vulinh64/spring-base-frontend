@@ -6,6 +6,14 @@ import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.min.css";
 
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
+}
+
 function extractText(node: ReactNode): string {
   if (typeof node === "string") return node;
   if (typeof node === "number") return String(node);
@@ -79,8 +87,38 @@ function CodeBlock({ children }: { children: ReactNode }) {
   );
 }
 
+const summaryInlineComponents: Components = {
+  p: ({ children }) => <>{children}</>,
+};
+
 const components: Components = {
   pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
+  summary: ({ children }) => {
+    const raw = extractText(children as ReactNode);
+    return (
+      <summary>
+        <Markdown remarkPlugins={[remarkGfm]} components={summaryInlineComponents}>
+          {raw}
+        </Markdown>
+      </summary>
+    );
+  },
+  h2: ({ children }) => {
+    const text = extractText(children as ReactNode);
+    const id = slugify(text);
+    return (
+      <h2 id={id} className="group flex items-center gap-2">
+        <span>{children}</span>
+        <a
+          href={`#${id}`}
+          className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-blue-400 transition-opacity no-underline font-normal text-base"
+          aria-label={`Link to ${text}`}
+        >
+          #
+        </a>
+      </h2>
+    );
+  },
 };
 
 interface MarkdownRendererProps {
@@ -91,7 +129,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
     <div className="prose prose-invert max-w-none">
       <Markdown
-        remarkPlugins={[remarkGfm, remarkAlert]}
+        remarkPlugins={[remarkGfm, [remarkAlert, { legacyTitle: true }]]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
         components={components}
       >

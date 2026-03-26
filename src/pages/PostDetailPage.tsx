@@ -162,11 +162,7 @@ export function PostDetailPage() {
       )}
     </article>
 
-    {headings.length > 0 && (
-      <aside className="hidden lg:block w-52 shrink-0">
-        <TableOfContents headings={headings} />
-      </aside>
-    )}
+    <TableOfContents headings={headings} />
     </div>
   );
 }

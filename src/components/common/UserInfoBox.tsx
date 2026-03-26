@@ -15,23 +15,20 @@ export function UserInfoBox() {
           <span className="text-sm text-gray-300">
             Welcome, <span className="font-medium text-gray-100">{displayName}</span>
           </span>
-          <button
-            onClick={logout}
-            className="rounded bg-gray-700 px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-600 transition-colors"
-          >
-            Log Out
-          </button>
+          <span className="text-sm text-gray-500">
+            (<button onClick={logout} className="text-gray-400 hover:text-red-400 transition-colors cursor-pointer">Log Out</button>)
+          </span>
         </>
       ) : (
         <>
           <span className="text-sm text-gray-400">You are not logged in.</span>
-          <Link
-            to="/login"
-            state={{ from: location.pathname + location.search }}
-            className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 transition-colors"
-          >
-            Log In
-          </Link>
+          <span className="text-sm text-gray-500">
+            (<Link
+              to="/login"
+              state={{ from: location.pathname + location.search }}
+              className="text-gray-400 hover:text-green-400 transition-colors"
+            >Log In</Link>)
+          </span>
         </>
       )}
     </div>

@@ -72,9 +72,15 @@ export function PostDetailPage() {
         {post.author && (
           <p className="text-sm text-gray-400 mb-2">
             by{" "}
-            <span title={post.author.email} className="text-gray-300 font-medium cursor-default">
-              {post.author.username}
-            </span>
+            {isAuthor ? (
+              <Link to="/me" title={post.author.email} className="text-blue-400 font-medium hover:text-blue-300 transition-colors">
+                {post.author.username}
+              </Link>
+            ) : (
+              <span title={post.author.email} className="text-gray-300 font-medium cursor-default">
+                {post.author.username}
+              </span>
+            )}
           </p>
         )}
 

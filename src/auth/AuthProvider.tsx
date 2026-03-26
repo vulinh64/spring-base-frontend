@@ -15,6 +15,7 @@ interface AuthState {
   authenticated: boolean;
   userId: string | null;
   username: string | null;
+  displayName: string | null;
   email: string | null;
   roles: UserRole[];
 }
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextValue>({
   authenticated: false,
   userId: null,
   username: null,
+  displayName: null,
   email: null,
   roles: [],
   login: async () => "",
@@ -42,6 +44,7 @@ const UNAUTHENTICATED: AuthState = {
   authenticated: false,
   userId: null,
   username: null,
+  displayName: null,
   email: null,
   roles: [],
 };
@@ -57,6 +60,7 @@ async function fetchMe(): Promise<AuthState> {
     authenticated: true,
     userId: user.id,
     username: user.username,
+    displayName: user.displayName,
     email: user.email,
     roles: user.userRoles,
   };
@@ -68,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authenticated: false,
     userId: null,
     username: null,
+    displayName: null,
     email: null,
     roles: [],
   });

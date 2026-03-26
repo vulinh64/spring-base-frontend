@@ -13,7 +13,10 @@ export function UserInfoBox() {
       {authenticated ? (
         <>
           <span className="text-sm text-gray-300">
-            Welcome, <span className="font-medium text-gray-100">{displayName}</span>
+            Welcome,{" "}
+            <Link to="/me" className="font-medium text-gray-100 hover:text-blue-400 transition-colors">
+              {displayName}
+            </Link>
           </span>
           <span className="text-sm text-gray-500">
             (<button onClick={logout} className="text-gray-400 hover:text-red-400 transition-colors cursor-pointer">Log Out</button>)

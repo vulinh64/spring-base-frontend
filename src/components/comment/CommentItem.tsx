@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type SubmitEvent } from "react";
+import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { SingleCommentResponse } from "@/types";
 import { commentApi } from "@/api";
@@ -102,7 +103,15 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
             <p className="text-xs text-gray-400">
               On <time>{formatDateTime(comment.createdDateTime)}</time>
               {comment.author && (
-                <>, user <span className="font-medium text-gray-200" title={comment.author.email}>{comment.author.username}</span></>
+                <>, user{" "}
+                  {canEdit ? (
+                    <Link to="/me" className="font-medium text-blue-400 hover:text-blue-300 transition-colors" title={comment.author.email}>
+                      {comment.author.username}
+                    </Link>
+                  ) : (
+                    <span className="font-medium text-gray-200" title={comment.author.email}>{comment.author.username}</span>
+                  )}
+                </>
               )}{" "}wrote:
               {comment.isEdited && <span className="italic text-gray-500 ml-1">(edited)</span>}
             </p>

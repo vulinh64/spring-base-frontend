@@ -1,7 +1,6 @@
 import {
     DEDUCTION_PER_DEPENDANT,
     EMPTY,
-    type TaxFormData,
     INSURANCE_RATES,
     LOWEST_PROBATION_SALARY_TO_BE_TAXED,
     MAXIMUM_BASIC_SALARY,
@@ -179,7 +178,7 @@ export function formatNumber(value: number | string, locale?: string): string {
 export const parseFormattedNumber = (value: string): number => {
     if (!value) return 0;
     // Remove all non-digit characters except decimal separator
-    const cleaned = value.replace(/[^\d]/g, EMPTY);
+    const cleaned = value.replace(/\D/g, EMPTY);
     return cleaned ? parseInt(cleaned, 10) : 0;
 };
 

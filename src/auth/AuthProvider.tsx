@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { UserRole, UserBasicResponse } from "@/types";
-import { login as authLogin, logout as authLogout } from "./keycloak";
+import { login as authLogin, logout as authLogout, refresh as authRefresh } from "./keycloak";
 import axios from "axios";
 
 interface AuthState {
@@ -78,6 +78,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(setState)
       .catch(() => setState(UNAUTHENTICATED));
   }, []);
+
+  // Background token refresh every 2 minutes
+  useEffect(() => {
+    if (!state.authenticated) return;
+
+    const intervalId = setInterval(() => {
+      authRefresh().catch(() => {
+        setState(UNAUTHENTICATED);
+      });
+    }, 2 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [state.authenticated]);
 
   const login = useCallback(async (username: string, password: string): Promise<string> => {
     await authLogin(username, password);

@@ -78,16 +78,6 @@ pre code {
   transition: border-color 0.2s;
 }
 
-.prose details[open] summary {
-  border-bottom: 1px solid #374151;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-
-.prose details[open]:hover summary {
-  border-bottom-color: #3b82f6;
-}
 
 /* GitHub-style alerts */
 .markdown-alert {
@@ -183,6 +173,129 @@ pre code {
 .code-block-wrapper pre.code-wrap code {
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* ── Tax Calculator ── */
+
+/* Smooth details expand/collapse */
+details {
+  interpolate-size: allow-keywords;
+}
+
+details::details-content {
+  height: 0;
+  overflow: clip;
+  transition: height 0.75s ease, content-visibility 0.5s allow-discrete;
+}
+
+details[open]::details-content {
+  height: auto;
+}
+
+
+.tax-error::before {
+  content: "❌ ";
+}
+
+.tax-warning::before {
+  content: "⚠️ ";
+}
+
+.tax-radio {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid #374151;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.tax-radio:checked {
+  border-color: #3b82f6;
+}
+
+.tax-radio:checked::before {
+  content: "";
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tax-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 3rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.tax-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.tax-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #374151;
+  transition: 0.5s;
+  border-radius: 1rem;
+}
+
+.tax-slider::before {
+  position: absolute;
+  content: "";
+  height: 1.125rem;
+  width: 1.125rem;
+  left: 0.1875rem;
+  bottom: 0.1875rem;
+  background-color: white;
+  transition: 0.5s;
+  border-radius: 1rem;
+}
+
+.tax-toggle-switch input:checked + .tax-slider {
+  background-color: #1d4ed8;
+}
+
+.tax-toggle-switch input:checked + .tax-slider::before {
+  transform: translateX(1.5rem);
+}
+
+@keyframes taxFieldSlideOut {
+  0%   { opacity: 1; transform: translateX(0);    max-height: 700px; }
+  55%  { opacity: 0; transform: translateX(52px); max-height: 700px; }
+  100% { opacity: 0; transform: translateX(52px); max-height: 0; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
+}
+
+@keyframes taxFieldSlideIn {
+  0%   { opacity: 0; transform: translateX(52px); max-height: 0; }
+  28%  { opacity: 0; transform: translateX(52px); max-height: 700px; }
+  100% { opacity: 1; transform: translateX(0);    max-height: 700px; }
+}
+
+.tax-field-exit {
+  animation: taxFieldSlideOut 0.45s ease-in forwards;
+  pointer-events: none;
+}
+
+.tax-field-enter {
+  animation: taxFieldSlideIn 0.5s ease-out forwards;
 }
 
 @keyframes slideIn {

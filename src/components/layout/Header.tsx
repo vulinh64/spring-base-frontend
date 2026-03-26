@@ -36,6 +36,9 @@ export function Header() {
 
         {/* Desktop nav — hidden on mobile */}
         <nav className="hidden md:flex items-center gap-6">
+          <Link to="/tax-calculator" className="text-sm text-gray-400 hover:text-gray-100">
+            Tax Calculator
+          </Link>
           <Link to="/" className="text-sm text-gray-400 hover:text-gray-100">
             Posts
           </Link>
@@ -49,6 +52,13 @@ export function Header() {
       {/* Mobile dropdown */}
       {mobileOpen && (
         <div className="md:hidden absolute left-0 right-0 top-full z-50 border-b border-gray-800 bg-gray-900 px-4 py-4 flex flex-col gap-4">
+          <Link
+            to="/tax-calculator"
+            className="text-sm text-gray-400 hover:text-gray-100"
+            onClick={() => setMobileOpen(false)}
+          >
+            Tax Calculator
+          </Link>
           <Link
             to="/"
             className="text-sm text-gray-400 hover:text-gray-100"

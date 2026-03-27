@@ -60,7 +60,7 @@ pre code {
 }
 
 .prose details {
-  border: 1px solid #374151;
+  border: 0.005em solid #374151;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -81,11 +81,11 @@ pre code {
 
 /* GitHub-style alerts */
 .markdown-alert {
-  border: 1px solid #374151;
+  border: 0.005em solid #374151;
   border-left: 0.25em solid #30363d;
   border-radius: 0.5rem;
-  padding: 0.5rem 1em;
-  margin: 1.5rem 0;
+  padding: 0.1em 1.5em 1em 1em;
+  margin: 2em 0;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -98,7 +98,11 @@ pre code {
   align-items: center;
   font-weight: 600;
   line-height: 1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5em;
+  padding-bottom: 0.5rem;
+  border-bottom: 0.005em solid #374151;
+  transition: border-color 0.2s;
+  text-transform: uppercase;
 }
 
 .markdown-alert .markdown-alert-title svg.octicon {
@@ -115,6 +119,9 @@ pre code {
 .markdown-alert-note .markdown-alert-title {
   color: #58a6ff;
 }
+.markdown-alert-note:hover .markdown-alert-title {
+  border-bottom-color: #1f6feb;
+}
 
 .markdown-alert-tip {
   border-left-color: #238636;
@@ -124,6 +131,9 @@ pre code {
 }
 .markdown-alert-tip .markdown-alert-title {
   color: #3fb950;
+}
+.markdown-alert-tip:hover .markdown-alert-title {
+  border-bottom-color: #238636;
 }
 
 .markdown-alert-important {
@@ -135,6 +145,9 @@ pre code {
 .markdown-alert-important .markdown-alert-title {
   color: #a371f7;
 }
+.markdown-alert-important:hover .markdown-alert-title {
+  border-bottom-color: #8957e5;
+}
 
 .markdown-alert-warning {
   border-left-color: #9e6a03;
@@ -145,6 +158,9 @@ pre code {
 .markdown-alert-warning .markdown-alert-title {
   color: #d29922;
 }
+.markdown-alert-warning:hover .markdown-alert-title {
+  border-bottom-color: #9e6a03;
+}
 
 .markdown-alert-caution {
   border-left-color: #da3633;
@@ -154,6 +170,9 @@ pre code {
 }
 .markdown-alert-caution .markdown-alert-title {
   color: #f85149;
+}
+.markdown-alert-caution:hover .markdown-alert-title {
+  border-bottom-color: #da3633;
 }
 
 /* Code block wrapper */
@@ -206,7 +225,7 @@ details[open]::details-content {
   appearance: none;
   width: 1.25rem;
   height: 1.25rem;
-  border: 1px solid #374151;
+  border: 0.005em solid #374151;
   border-radius: 50%;
   position: relative;
   cursor: pointer;

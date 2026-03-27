@@ -67,21 +67,19 @@ async function fetchMe(): Promise<AuthState> {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    initialized: false,
-    authenticated: false,
-    userId: null,
-    username: null,
-    displayName: null,
-    email: null,
-    roles: [],
-  });
+  const [state, setState] = useState<AuthState>(() =>
+    localStorage.getItem("sessionHint") ? { initialized: false, authenticated: false, userId: null, username: null, displayName: null, email: null, roles: [] } : UNAUTHENTICATED
+  );
 
-  // On mount, try to restore session
+  // On mount, try to restore session only if a hint says we might have one
   useEffect(() => {
+    if (!localStorage.getItem("sessionHint")) return;
     fetchMe()
       .then(setState)
-      .catch(() => setState(UNAUTHENTICATED));
+      .catch(() => {
+        localStorage.removeItem("sessionHint");
+        setState(UNAUTHENTICATED);
+      });
   }, []);
 
   // Background token refresh every 2 minutes
@@ -90,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const intervalId = setInterval(() => {
       authRefresh().catch(() => {
+        localStorage.removeItem("sessionHint");
         setState(UNAUTHENTICATED);
       });
     }, 2 * 60 * 1000);
@@ -99,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (username: string, password: string): Promise<string> => {
     await authLogin(username, password);
+    localStorage.setItem("sessionHint", "1");
     const userState = await fetchMe();
     setState(userState);
     return userState.userId!;
@@ -106,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await authLogout();
+    localStorage.removeItem("sessionHint");
     setState(UNAUTHENTICATED);
   }, []);
 

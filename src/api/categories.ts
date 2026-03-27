@@ -8,6 +8,10 @@ import type {
 } from "@/types";
 
 export const categoryApi = {
+  all() {
+    return apiClient.get<CategoryResponse[]>("/category/all");
+  },
+
   search(params?: CategorySearchRequest & Pageable) {
     return apiClient.get<Page<CategoryResponse>>("/category/search", { params });
   },

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { slugify } from "./MarkdownRenderer";
+import {slugify} from "@/utils/slugify.ts";
 
 function InlineMarkdown({ text }: { text: string }) {
   return (

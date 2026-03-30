@@ -1,18 +1,12 @@
 import { useState, useCallback, type ReactNode } from "react";
+import { YouTubePlayer } from "@/components/common/YouTubePlayer";
 import Markdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.min.css";
-
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w-]/g, "");
-}
+import {slugify} from "@/utils/slugify.ts";
 
 function extractText(node: ReactNode): string {
   if (typeof node === "string") return node;
@@ -91,7 +85,27 @@ const summaryInlineComponents: Components = {
   p: ({ children }) => <>{children}</>,
 };
 
-const components: Components = {
+const components = {
+  youtube: ({ node }) => {
+    const url = (node as unknown as { properties: { url?: string } }).properties?.url;
+    let videoId: string | null = null;
+    if (url) {
+      try {
+        const parsed = new URL(url);
+        videoId = parsed.searchParams.get("v") ?? parsed.pathname.split("/").pop() ?? null;
+      } catch {
+        videoId = null;
+      }
+    }
+    if (!videoId) return (
+      <div className="aspect-video my-4 flex items-center justify-center rounded bg-gray-800 border border-red-800">
+        <svg className="w-16 h-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+    );
+    return <YouTubePlayer videoId={videoId} />;
+  },
   pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
   summary: ({ children }) => {
     const raw = extractText(children as ReactNode);
@@ -131,7 +145,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       <Markdown
         remarkPlugins={[remarkGfm, [remarkAlert, { legacyTitle: true }]]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
-        components={components}
+        components={components as Components}
       >
         {content}
       </Markdown>

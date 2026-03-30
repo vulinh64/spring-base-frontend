@@ -25,7 +25,11 @@ export function PostCard({ post }: PostCardProps) {
           <Link
             to={`/category/${post.category.categorySlug}`}
             onClick={(e) => e.stopPropagation()}
-            className="rounded bg-blue-900/40 px-2 py-0.5 text-xs text-blue-400 hover:bg-blue-900/60 transition-colors"
+            className={`rounded px-2 py-0.5 text-xs transition-colors ${
+              post.category.id === "00000000-0000-0000-0000-000000000000"
+                ? "bg-red-900/40 text-red-400 hover:bg-red-900/60"
+                : "bg-blue-900/40 text-blue-400 hover:bg-blue-900/60"
+            }`}
           >
             {post.category.displayName}
           </Link>

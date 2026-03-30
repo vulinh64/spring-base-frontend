@@ -13,6 +13,7 @@ import { useToast } from "@/components/common/Toast";
 
 export function CategoriesPage() {
   const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
   const [newName, setNewName] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -21,7 +22,7 @@ export function CategoriesPage() {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { data, isLoading, error } = useCategories({ page, size: 10 });
+  const { data, isLoading, error } = useCategories({ page, size });
 
   const createMutation = useMutation({
     mutationFn: () => categoryApi.create({ displayName: newName }),
@@ -112,7 +113,7 @@ export function CategoriesPage() {
               ))}
             </div>
           )}
-          <Pagination page={page} totalPages={data.page.totalPages} onPageChange={setPage} />
+          <Pagination page={page} totalPages={data.page.totalPages} onPageChange={setPage} size={size} onSizeChange={setSize} sizeLabel="Categories per page:" />
         </>
       )}
 

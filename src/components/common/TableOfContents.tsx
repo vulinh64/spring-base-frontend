@@ -29,7 +29,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (headings.length === 0) return;
+    if (headings.length <= 1) return;
 
     const SHOW_THRESHOLD = 6 * 24;   // button visibility: 6 lines from top
     const ACTIVE_THRESHOLD = 120;    // active heading: ~below the fixed header
@@ -56,7 +56,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
     return () => window.removeEventListener("scroll", update);
   }, [headings]);
 
-  if (headings.length === 0) return null;
+  if (headings.length <= 1) return null;
 
   const panelWidth = 256;
 

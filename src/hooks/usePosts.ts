@@ -30,6 +30,7 @@ export function usePost(identity: string) {
     queryKey: ["post", identity],
     queryFn: () => postApi.getByIdentity(identity).then((r) => r.data),
     enabled: !!identity,
+    staleTime: 0,
   });
 }
 

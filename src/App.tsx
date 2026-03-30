@@ -14,6 +14,7 @@ import { CategoryPostsPage } from "@/pages/CategoryPostsPage";
 import { SearchPage } from "@/pages/SearchPage";
 import { UserDetailsPage } from "@/pages/UserDetailsPage";
 import { TaxCalculatorPage } from "@/pages/TaxCalculatorPage";
+import { PostsPage } from "@/pages/PostsPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 const queryClient = new QueryClient({
@@ -34,6 +35,7 @@ export default function App() {
             <PageLayout>
               <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/posts" element={<PostsPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/post/:slug" element={<PostDetailPage />} />
                 <Route path="/search" element={<SearchPage />} />

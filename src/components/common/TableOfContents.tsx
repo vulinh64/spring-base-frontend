@@ -101,7 +101,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   return (
     <>
       {/* Desktop: static sticky sidebar — acts as flex child in PostDetailPage */}
-      <nav className="hidden lg:block w-64 shrink-0 sticky top-8 self-start">
+      <nav className="hidden lg:block w-64 shrink-0 sticky top-20 self-start">
         <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
           On this page
         </p>

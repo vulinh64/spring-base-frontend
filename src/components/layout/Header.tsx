@@ -48,7 +48,7 @@ export function Header() {
   }
 
   return (
-    <header className="relative border-b border-gray-800 bg-gray-900">
+    <header className="sticky top-0 z-50 border-b border-gray-800 bg-gray-900">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
 
         {/* Mobile: hamburger + Blog title */}

@@ -63,4 +63,16 @@ The app will be accessible at `http://localhost`.
 
 ## Running the Backend
 
-TBA
+Use the provided convenience scripts to pull and start the full backend stack via Docker Compose. They download `run-full-squad` and `docker-compose.yml` from the [`spring-base-squad`](https://github.com/vulinh64/spring-base-squad) repository, execute them, then clean up the downloaded files.
+
+**Linux / macOS:**
+
+```sh
+sh Start-Server.sh
+```
+
+**Windows:**
+
+```cmd
+Start-Server.cmd
+```

@@ -86,7 +86,7 @@ const summaryInlineComponents: Components = {
 };
 
 const components = {
-  youtube: ({ node }) => {
+  youtube: ({ node }: { node?: unknown }) => {
     const url = (node as unknown as { properties: { url?: string } }).properties?.url;
     let videoId: string | null = null;
     if (url) {
@@ -106,8 +106,8 @@ const components = {
     );
     return <YouTubePlayer videoId={videoId} />;
   },
-  pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
-  summary: ({ children }) => {
+  pre: ({ children }: { children?: ReactNode }) => <CodeBlock>{children}</CodeBlock>,
+  summary: ({ children }: { children?: ReactNode }) => {
     const raw = extractText(children as ReactNode);
     return (
       <summary>
@@ -117,7 +117,7 @@ const components = {
       </summary>
     );
   },
-  h2: ({ children }) => {
+  h2: ({ children }: { children?: ReactNode }) => {
     const text = extractText(children as ReactNode);
     const id = slugify(text);
     return (

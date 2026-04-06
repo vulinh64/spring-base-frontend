@@ -1,24 +1,17 @@
 # Frontend Project for `spring-base` Java Backend Service
 
-A PoC frontend project paired with my [backend service](https://github.com/vulinh64/spring-base).
-
-Most of the features were vibe coded.
+A frontend project paired with my [backend service](https://github.com/vulinh64/spring-base).
 
 ## Tech Stack
 
-- **React 19** with TypeScript
-
-- **Vite 8** — dev server and bundler
-
-- **Tailwind CSS 4**
-
-- **TanStack Query** — server state management
-
-- **React Router v7**
-
+- **Next.js 16** (App Router) with TypeScript
+- **React 19** — UI library
+- **Tailwind CSS 4** — styling
+- **TanStack Query v5** — server state management
 - **Axios** — HTTP client
-
 - **react-markdown** + remark/rehype plugins — Markdown rendering
+
+> **Migration status**: The project has been fully migrated from Vite + React Router to Next.js App Router. SEO-critical pages (`/posts`, `/post/[slug]`, `/categories`, `/category/[slug]`) are Server Components with server-side data fetching and dynamic metadata. Interactive/auth-heavy pages remain client-rendered. See [NextJS-SSR.md](NextJS-SSR.md) for full details.
 
 ## Prerequisites
 
@@ -30,20 +23,19 @@ Most of the features were vibe coded.
 Install dependencies and start the dev server:
 
 ```sh
-# npm
 npm install
 npm run dev
-
-# pnpm
-pnpm install
-pnpm dev
-
-# yarn
-yarn
-yarn dev
 ```
 
-The app will be accessible at `http://localhost:5173`.
+The app will be accessible at `http://localhost:3000`.
+
+The dev server proxies `/api` requests to the backend at `http://localhost:8088` (configurable via `BACKEND_URL` in `.env.local`).
+
+## Environment Variables
+
+| Variable      | Default                 | Description                                                              |
+|---------------|-------------------------|--------------------------------------------------------------------------|
+| `BACKEND_URL` | `http://localhost:8088` | Backend API base URL (used by Next.js rewrites to proxy `/api` requests) |
 
 ## Running with Docker
 
@@ -53,13 +45,19 @@ Build the image:
 docker build -t spring-base-frontend .
 ```
 
-Run the container:
+Run the container standalone:
 
 ```sh
-docker run -p 80:80 spring-base-frontend
+docker run -p 3000:3000 -e BACKEND_URL=http://host.docker.internal:8088 spring-base-frontend
 ```
 
-The app will be accessible at `http://localhost`.
+Or use Docker Compose with the backend:
+
+```sh
+docker compose up
+```
+
+The app will be accessible at `http://localhost:3000`.
 
 ## Running the Backend
 

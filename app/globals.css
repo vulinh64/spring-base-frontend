@@ -1,0 +1,323 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Noto Sans", "Noto Color Emoji", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+code, pre code, kbd {
+  font-family: var(--font-mono);
+}
+
+pre code {
+  line-height: 2;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose :not(pre) > code,
+.prose details summary code {
+  color: #f87171;
+  background-color: #1f2937;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}
+
+.prose details {
+  border: 0.005em solid #374151;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prose details:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.prose details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #d1d5db;
+  transition: border-color 0.2s;
+}
+
+
+/* GitHub-style alerts */
+.markdown-alert {
+  border: 0.005em solid #374151;
+  border-left: 0.25em solid #30363d;
+  border-radius: 0.5rem;
+  padding: 0.1em 1.5em 1em 1em;
+  margin: 2em 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.markdown-alert > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 1.5em;
+  padding-bottom: 0.5rem;
+  border-bottom: 0.005em solid #374151;
+  transition: border-color 0.2s;
+  text-transform: uppercase;
+}
+
+.markdown-alert .markdown-alert-title svg.octicon {
+  margin-right: 0.5rem;
+  fill: currentColor;
+}
+
+.markdown-alert-note {
+  border-left-color: #1f6feb;
+}
+.markdown-alert-note:hover {
+  border-color: #1f6feb;
+}
+.markdown-alert-note .markdown-alert-title {
+  color: #58a6ff;
+}
+.markdown-alert-note:hover .markdown-alert-title {
+  border-bottom-color: #1f6feb;
+}
+
+.markdown-alert-tip {
+  border-left-color: #238636;
+}
+.markdown-alert-tip:hover {
+  border-color: #238636;
+}
+.markdown-alert-tip .markdown-alert-title {
+  color: #3fb950;
+}
+.markdown-alert-tip:hover .markdown-alert-title {
+  border-bottom-color: #238636;
+}
+
+.markdown-alert-important {
+  border-left-color: #8957e5;
+}
+.markdown-alert-important:hover {
+  border-color: #8957e5;
+}
+.markdown-alert-important .markdown-alert-title {
+  color: #a371f7;
+}
+.markdown-alert-important:hover .markdown-alert-title {
+  border-bottom-color: #8957e5;
+}
+
+.markdown-alert-warning {
+  border-left-color: #9e6a03;
+}
+.markdown-alert-warning:hover {
+  border-color: #9e6a03;
+}
+.markdown-alert-warning .markdown-alert-title {
+  color: #d29922;
+}
+.markdown-alert-warning:hover .markdown-alert-title {
+  border-bottom-color: #9e6a03;
+}
+
+.markdown-alert-caution {
+  border-left-color: #da3633;
+}
+.markdown-alert-caution:hover {
+  border-color: #da3633;
+}
+.markdown-alert-caution .markdown-alert-title {
+  color: #f85149;
+}
+.markdown-alert-caution:hover .markdown-alert-title {
+  border-bottom-color: #da3633;
+}
+
+/* Remove hljs inner background so it inherits from <pre> */
+.prose pre code.hljs {
+  background: transparent;
+}
+
+/* Word wrap when toggled (mobile default on, desktop on hover-toggle) */
+pre.code-wrap,
+pre.code-wrap code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Tax Calculator ── */
+
+/* Smooth details expand/collapse */
+details {
+  interpolate-size: allow-keywords;
+}
+
+details::details-content {
+  height: 0;
+  overflow: clip;
+  transition: height 0.75s ease, content-visibility 0.5s allow-discrete;
+}
+
+details[open]::details-content {
+  height: auto;
+}
+
+
+.tax-error::before {
+  content: "❌ ";
+}
+
+.tax-warning::before {
+  content: "⚠️ ";
+}
+
+.tax-radio {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0.005em solid #374151;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.tax-radio:checked {
+  border-color: #3b82f6;
+}
+
+.tax-radio:checked::before {
+  content: "";
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tax-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 3rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.tax-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.tax-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #374151;
+  transition: 0.5s;
+  border-radius: 1rem;
+}
+
+.tax-slider::before {
+  position: absolute;
+  content: "";
+  height: 1.125rem;
+  width: 1.125rem;
+  left: 0.1875rem;
+  bottom: 0.1875rem;
+  background-color: white;
+  transition: 0.5s;
+  border-radius: 1rem;
+}
+
+.tax-toggle-switch input:checked + .tax-slider {
+  background-color: #1d4ed8;
+}
+
+.tax-toggle-switch input:checked + .tax-slider::before {
+  transform: translateX(1.5rem);
+}
+
+@keyframes taxFieldSlideOut {
+  0%   { opacity: 1; transform: translateX(0);    max-height: 700px; }
+  55%  { opacity: 0; transform: translateX(52px); max-height: 700px; }
+  100% { opacity: 0; transform: translateX(52px); max-height: 0; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
+}
+
+@keyframes taxFieldSlideIn {
+  0%   { opacity: 0; transform: translateX(52px); max-height: 0; }
+  28%  { opacity: 0; transform: translateX(52px); max-height: 700px; }
+  100% { opacity: 1; transform: translateX(0);    max-height: 700px; }
+}
+
+.tax-field-exit {
+  animation: taxFieldSlideOut 0.45s ease-in forwards;
+  pointer-events: none;
+}
+
+.tax-field-enter {
+  animation: taxFieldSlideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

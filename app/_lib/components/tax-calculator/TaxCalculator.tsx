@@ -1,5 +1,6 @@
 import React, {type ChangeEvent, type JSX, useCallback, useEffect, useRef, useState} from "react";
 import clsx from "clsx";
+import { Hr } from "@/components/common/Hr";
 import {
     calculateVietnamTax, formatNumber,
     normalizeNumber,
@@ -171,7 +172,6 @@ export default function TaxCalculator(): JSX.Element {
     useEffect(() => {
         const id = setTimeout(() => validateRef.current(true), 0);
         return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.onProbation, formData.isNewTaxPeriod, locale]);
 
     const handleBlur = (): void => { validateAndCalculate(true); };
@@ -250,7 +250,7 @@ export default function TaxCalculator(): JSX.Element {
         <div className="w-full mx-auto p-4 mt-10 mb-10">
             <form onSubmit={handleSubmit} className="mx-auto md:w-1/2">
                 <h1 className="text-3xl font-bold text-gray-100 text-center mb-6">Tính thuế TNCN</h1>
-                <hr className="border-gray-800 mb-6" />
+                <Hr className="mb-6" />
                 <div className="flex flex-wrap gap-6 mb-4">
                     <label className="flex items-center gap-3 cursor-pointer text-gray-300">
                         <label className="tax-toggle-switch">
@@ -413,7 +413,7 @@ export default function TaxCalculator(): JSX.Element {
                                 </>
                             )}
 
-                            <hr className="border-gray-700 my-2" />
+                            <Hr className="my-2" />
 
                             {!result.isProbation && result.nonProbation && (
                                 <div>

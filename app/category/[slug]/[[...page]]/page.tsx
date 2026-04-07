@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -6,17 +7,18 @@ import { PostList } from "@/components/post/PostList";
 import { PaginationNav } from "@/components/common/PaginationNav";
 
 interface Props {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string }>;
+  params: Promise<{ slug: string; page?: string[] }>;
+  searchParams: Promise<Record<string, never>>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, page: segments } = await params;
+  const frontendPage = segments ? Number(segments[0]) : 1;
   try {
     const data = await fetchPostsByCategory(slug, { page: 0, size: 1 });
     const name = data.content[0]?.category?.displayName ?? slug;
     return {
-      title: `Category: ${name}`,
+      title: frontendPage > 1 ? `Category: ${name} — Page ${frontendPage}` : `Category: ${name}`,
       description: `Posts in the "${name}" category`,
     };
   } catch {
@@ -24,23 +26,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function CategoryPostsPage({
-  params,
-  searchParams,
-}: Props) {
-  const { slug } = await params;
-  const sp = await searchParams;
-  const page = Number(sp.page || "0");
+export default async function CategoryPostsPage({ params }: Props) {
+  const { slug, page: segments } = await params;
+
+  const frontendPage = segments ? Number(segments[0]) : 1;
+
+  if (isNaN(frontendPage) || frontendPage < 1) redirect(`/category/${slug}`);
+  // /category/slug/1 → canonical /category/slug
+  if (segments && frontendPage === 1) redirect(`/category/${slug}`);
+
+  const backendPage = frontendPage - 1;
+  const size = 10;
 
   let data;
   try {
     data = await fetchPostsByCategory(slug, {
-      page,
-      size: 10,
+      page: backendPage,
+      size,
       sort: ["createdDateTime,desc", "updatedDateTime,desc"],
     });
   } catch {
     notFound();
+  }
+
+  // Out-of-range page → redirect to last page
+  if (data.page.totalPages > 0 && backendPage >= data.page.totalPages) {
+    const lastFrontend = data.page.totalPages;
+    const pathPart = lastFrontend === 1 ? "" : `/${lastFrontend}`;
+    redirect(`/category/${slug}${pathPart}`);
   }
 
   const totalElements = data.page.totalElements;
@@ -67,7 +80,12 @@ export default async function CategoryPostsPage({
       </p>
 
       <PostList posts={data.content} />
-      <PaginationNav totalPages={data.page.totalPages} />
+      <PaginationNav
+        totalPages={data.page.totalPages}
+        page={backendPage}
+        size={size}
+        basePath={`/category/${slug}`}
+      />
     </div>
   );
 }

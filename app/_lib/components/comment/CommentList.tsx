@@ -6,6 +6,7 @@ import { CommentForm } from "./CommentForm";
 import { Pagination } from "@/components/common/Pagination";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ErrorBanner } from "@/components/common/ErrorBanner";
+import { Hr } from "@/components/common/Hr";
 
 interface CommentListProps {
   postId: string;
@@ -62,7 +63,7 @@ export function CommentList({ postId, commentCount }: CommentListProps) {
 
       {authenticated && (
         <>
-          <hr className="border-gray-800 my-6" />
+          <Hr className="my-6" />
           <CommentForm postId={postId} />
         </>
       )}

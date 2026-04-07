@@ -1,29 +1,34 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Pagination } from "./Pagination";
+
+const DEFAULT_SIZE = 10;
 
 interface PaginationNavProps {
   totalPages: number;
+  page: number;
+  size: number;
+  basePath: string;
   showSizeChanger?: boolean;
   sizeLabel?: string;
 }
 
 export function PaginationNav({
   totalPages,
+  page,
+  size,
+  basePath,
   showSizeChanger,
   sizeLabel,
 }: PaginationNavProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get("page") || "0");
-  const size = Number(searchParams.get("size") || "10");
 
-  function navigate(newPage: number, newSize: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newPage));
-    params.set("size", String(newSize));
-    router.push(`?${params.toString()}`);
+  function navigate(newBackendPage: number, newSize: number) {
+    const frontendPage = newBackendPage + 1;
+    const pathPart = frontendPage === 1 ? "" : `/${frontendPage}`;
+    const sizePart = newSize !== DEFAULT_SIZE ? `?size=${newSize}` : "";
+    router.push(`${basePath}${pathPart}${sizePart}`);
   }
 
   return (

@@ -1,4 +1,6 @@
-const PAGE_SIZE_OPTIONS = [10, 20, 50];
+import { Hr } from "./Hr";
+
+const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
 interface PaginationProps {
   page: number;
@@ -14,7 +16,7 @@ export function Pagination({ page, totalPages, onPageChange, size, onSizeChange,
 
   return (
     <div className="flex flex-col gap-3 py-4">
-    <hr className="border-gray-800" />
+    <Hr />
     <div className="flex items-center justify-end gap-4">
       <div className="flex items-center gap-2">
         <button
@@ -49,7 +51,7 @@ export function Pagination({ page, totalPages, onPageChange, size, onSizeChange,
                   ? "border-blue-500 bg-blue-600 text-white"
                   : "border-gray-700 text-gray-300 hover:bg-gray-800"
               }`}
-              onClick={() => { onSizeChange(s); onPageChange(0); }}
+              onClick={() => onSizeChange(s)}
             >
               {s}
             </button>

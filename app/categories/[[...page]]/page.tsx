@@ -1,24 +1,46 @@
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchCategories } from "@/api/server/categories";
 import { PaginationNav } from "@/components/common/PaginationNav";
-import { CreateCategoryForm, DeleteCategoryButton } from "./categories-admin";
-
-export const metadata: Metadata = {
-  title: "Categories",
-  description: "Browse all categories",
-};
+import { CreateCategoryForm, DeleteCategoryButton } from "../categories-admin";
 
 interface Props {
-  searchParams: Promise<{ page?: string; size?: string }>;
+  params: Promise<{ page?: string[] }>;
+  searchParams: Promise<{ size?: string }>;
 }
 
-export default async function CategoriesPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const page = Number(params.page || "0");
-  const size = Number(params.size || "10");
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { page: segments } = await params;
+  const frontendPage = segments ? Number(segments[0]) : 1;
+  return {
+    title: frontendPage > 1 ? `Categories — Page ${frontendPage}` : "Categories",
+    description: "Browse all categories",
+  };
+}
 
-  const data = await fetchCategories({ page, size });
+export default async function CategoriesPage({ params, searchParams }: Props) {
+  const { page: segments } = await params;
+  const { size: sizeParam } = await searchParams;
+
+  const frontendPage = segments ? Number(segments[0]) : 1;
+  const size = Number(sizeParam || "10");
+
+  if (isNaN(frontendPage) || frontendPage < 1) redirect("/categories");
+  // /categories/1 → canonical /categories
+  if (segments && frontendPage === 1) redirect("/categories");
+
+  const backendPage = frontendPage - 1;
+
+  const data = await fetchCategories({ page: backendPage, size });
+
+  // Out-of-range page → redirect to last page
+  if (data.page.totalPages > 0 && backendPage >= data.page.totalPages) {
+    const lastFrontend = data.page.totalPages;
+    const pathPart = lastFrontend === 1 ? "" : `/${lastFrontend}`;
+    const sizePart = size !== 10 ? `?size=${size}` : "";
+    redirect(`/categories${pathPart}${sizePart}`);
+  }
 
   return (
     <div>
@@ -56,6 +78,9 @@ export default async function CategoriesPage({ searchParams }: Props) {
 
       <PaginationNav
         totalPages={data.page.totalPages}
+        page={backendPage}
+        size={size}
+        basePath="/categories"
         showSizeChanger
         sizeLabel="Categories per page:"
       />

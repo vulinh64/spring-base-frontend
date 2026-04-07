@@ -6,6 +6,7 @@ import { commentApi } from "@/api";
 import { useAuth } from "@/auth/AuthProvider";
 import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
 import { formatDateTime } from "@/utils/date";
+import { Hr } from "@/components/common/Hr";
 
 interface CommentItemProps {
   comment: SingleCommentResponse;
@@ -124,7 +125,7 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
               </button>
             )}
           </div>
-          <hr className="border-gray-700 mt-2" />
+          <Hr className="mt-2" />
           <div
             ref={contentRef}
             className={`mt-3 text-sm text-gray-300 prose prose-sm prose-invert max-w-none overflow-hidden transition-[max-height] duration-300 ${expanded ? "max-h-none" : "max-h-12"}`}

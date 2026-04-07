@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { NavLink } from "@/components/common/NavLink";
+import { Hr } from "@/components/common/Hr";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserInfoBox } from "@/components/common/UserInfoBox";
 import { SearchBar } from "@/components/common/SearchBar";
@@ -81,13 +83,13 @@ export function Header() {
           <Link href="/tax-calculator" className="text-sm text-gray-400 hover:text-gray-100">
             Tax Calculator
           </Link>
-          <Link
+          <NavLink
             href="/posts"
             className="text-sm text-gray-400 hover:text-gray-100"
             onClick={() => queryClient.invalidateQueries({ queryKey: ["posts"] })}
           >
             Posts
-          </Link>
+          </NavLink>
 
           {/* Categories with click dropdown */}
           <div className="relative" ref={catRef}>
@@ -108,14 +110,14 @@ export function Header() {
             </button>
             {catOpen && (
               <div className="absolute right-0 top-full mt-1 w-44 rounded border border-gray-700 bg-gray-900 py-1 z-50 shadow-lg">
-                <Link
+                <NavLink
                   href="/categories"
                   className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-100"
                   onClick={() => { setCatOpen(false); queryClient.invalidateQueries({ queryKey: ["categories"] }); }}
                 >
                   All Categories
-                </Link>
-                <hr className="border-gray-700 my-1" />
+                </NavLink>
+                <Hr className="my-1" />
                 {catLoading ? (
                   <div className="flex justify-center py-2">
                     <svg className="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
@@ -125,14 +127,14 @@ export function Header() {
                   </div>
                 ) : (
                   categories.map((cat) => (
-                    <Link
+                    <NavLink
                       key={cat.categorySlug}
                       href={`/category/${cat.categorySlug}`}
                       className="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-100"
                       onClick={() => { setCatOpen(false); queryClient.invalidateQueries({ queryKey: ["posts", "category", cat.categorySlug] }); }}
                     >
                       {cat.displayName}
-                    </Link>
+                    </NavLink>
                   ))
                 )}
               </div>
@@ -153,13 +155,13 @@ export function Header() {
           >
             Tax Calculator
           </Link>
-          <Link
+          <NavLink
             href="/posts"
             className="text-sm text-gray-400 hover:text-gray-100"
             onClick={() => { setMobileOpen(false); queryClient.invalidateQueries({ queryKey: ["posts"] }); }}
           >
             Posts
-          </Link>
+          </NavLink>
 
           {/* Categories with expandable sub-list */}
           <div>
@@ -176,14 +178,14 @@ export function Header() {
             </button>
             {mobileCatOpen && (
               <div className="mt-2 flex flex-col gap-2 pl-4">
-                <Link
+                <NavLink
                   href="/categories"
                   className="text-sm text-gray-400 hover:text-gray-100"
                   onClick={() => { setMobileOpen(false); setMobileCatOpen(false); queryClient.invalidateQueries({ queryKey: ["categories"] }); }}
                 >
                   All Categories
-                </Link>
-                <hr className="border-gray-700" />
+                </NavLink>
+                <Hr />
                 {catLoading ? (
                   <div className="flex justify-center py-2">
                     <svg className="animate-spin h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
@@ -193,14 +195,14 @@ export function Header() {
                   </div>
                 ) : (
                   categories.map((cat) => (
-                    <Link
+                    <NavLink
                       key={cat.categorySlug}
                       href={`/category/${cat.categorySlug}`}
                       className="text-sm text-gray-400 hover:text-gray-100"
                       onClick={() => { setMobileOpen(false); setMobileCatOpen(false); queryClient.invalidateQueries({ queryKey: ["posts", "category", cat.categorySlug] }); }}
                     >
                       {cat.displayName}
-                    </Link>
+                    </NavLink>
                   ))
                 )}
               </div>
@@ -208,7 +210,7 @@ export function Header() {
           </div>
 
           {showSearch && <SearchBar />}
-          <hr className="border-gray-700" />
+          <Hr />
           {showSearch && <UserInfoBox />}
         </div>
       )}

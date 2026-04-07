@@ -9,6 +9,7 @@ import { postApi, subscriptionApi } from "@/api";
 import { CommentList } from "@/components/comment/CommentList";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/Toast";
+import { Hr } from "@/components/common/Hr";
 
 interface PostDetailClientProps {
   postId: string;
@@ -197,7 +198,7 @@ export function PostDetailClient({
                 >
                   Delete
                 </button>
-                <hr className="border-gray-700 my-1" />
+                <Hr className="my-1" />
                 <Link
                   href={`/post/${postSlug}/revisions`}
                   className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800"

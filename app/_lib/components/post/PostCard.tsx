@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { PrefetchPostProjection } from "@/types";
 import { formatDateTime } from "@/utils/date";
+import { Hr } from "@/components/common/Hr";
 
 interface PostCardProps {
   post: PrefetchPostProjection;
@@ -51,7 +52,7 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Footer */}
       <div className="flex flex-col gap-2 mt-auto">
-        <hr className="border-gray-800" />
+        <Hr />
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <time>{formatDateTime(post.createdDateTime)}</time>
           {post.updatedDateTime !== post.createdDateTime && (

@@ -74,3 +74,19 @@ sh Start-Server.sh
 ```cmd
 Start-Server.cmd
 ```
+
+### Running the Full Stack (Backend + Frontend)
+
+Use the `Start-Everything` scripts to build and start both the backend and frontend via Docker Compose. The frontend will be accessible at `http://localhost`.
+
+**Linux / macOS:**
+
+```sh
+sh Start-Everything.sh
+```
+
+**Windows:**
+
+```cmd
+Start-Everything.cmd
+```

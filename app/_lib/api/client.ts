@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { GenericResponse } from "@/types";
-import { refresh } from "@/auth/keycloak";
+import { refresh } from "@/auth/auth-client";
 
 declare module "axios" {
   interface InternalAxiosRequestConfig {
@@ -24,14 +24,13 @@ apiClient.interceptors.response.use(
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       const originalRequest = error.config;
 
-      // Attempt token refresh once before giving up
       if (originalRequest && !originalRequest._retried) {
         originalRequest._retried = true;
         try {
           await refresh();
           return apiClient(originalRequest);
         } catch {
-          // Refresh failed — session is truly expired
+          // Refresh failed — session is gone. Fall through to redirect.
         }
       }
 

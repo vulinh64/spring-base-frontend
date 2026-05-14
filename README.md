@@ -29,13 +29,20 @@ npm run dev
 
 The app will be accessible at `http://localhost:3000`.
 
-The dev server proxies `/api` requests to the backend at `http://localhost:8088` (configurable via `BACKEND_URL` in `.env.local`).
+The dev server proxies browser requests under `/api` to two backends:
+- `/api/auth/*` and `/api/accounts/*` → auth server at `http://localhost:8080` (configurable via `AUTH_URL`)
+- everything else under `/api/*` → service backend at `http://localhost:8088` (configurable via `BACKEND_URL`)
+
+The `/api` prefix is stripped on the way out — e.g. `/api/post/123` → `${BACKEND_URL}/post/123`. Server Components fetch the backend directly (no proxy), so they also rely on `BACKEND_URL` / `AUTH_URL`.
+
+Auth uses HttpOnly cookies (`access_token`, `refresh_token`) issued by the auth server on `/auth/login`. The proxy forwards cookies in both directions, so the browser never sees the JWTs and the app server reads `access_token` from the cookie via `CookieBearerTokenResolver`. In production, the same routing is provided by `nginx.conf`.
 
 ## Environment Variables
 
-| Variable      | Default                 | Description                                                              |
-|---------------|-------------------------|--------------------------------------------------------------------------|
-| `BACKEND_URL` | `http://localhost:8088` | Backend API base URL (used by Next.js rewrites to proxy `/api` requests) |
+| Variable      | Default                 | Description                                                                       |
+|---------------|-------------------------|-----------------------------------------------------------------------------------|
+| `AUTH_URL`    | `http://localhost:8080` | Auth server base URL — used for `/api/auth/*` and `/api/accounts/*` rewrites      |
+| `BACKEND_URL` | `http://localhost:8088` | Service backend base URL — used by the catch-all `/api/*` rewrite and `serverFetch` |
 
 ## Running with Docker
 
@@ -48,7 +55,10 @@ docker build -t spring-base-frontend .
 Run the container standalone:
 
 ```sh
-docker run -p 3000:3000 -e BACKEND_URL=http://host.docker.internal:8088 spring-base-frontend
+docker run -p 3000:3000 \
+  -e AUTH_URL=http://host.docker.internal:8080 \
+  -e BACKEND_URL=http://host.docker.internal:8088 \
+  spring-base-frontend
 ```
 
 Or use Docker Compose with the backend:

@@ -6,8 +6,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { UserRole, UserBasicResponse } from "@/types";
-import { login as authLogin, logout as authLogout, refresh as authRefresh } from "./keycloak";
+import type { UserRole, AccountInfo } from "@/types";
+import { login as authLogin, logout as authLogout, refresh as authRefresh } from "./auth-client";
 import axios from "axios";
 
 interface AuthState {
@@ -49,12 +49,7 @@ const UNAUTHENTICATED: AuthState = {
   roles: [],
 };
 
-async function fetchMe(): Promise<AuthState> {
-  const { data } = await axios.get<{ data: UserBasicResponse }>("/api/auth/me", {
-    withCredentials: true,
-  });
-  const user = data.data;
-
+function toAuthState(user: AccountInfo): AuthState {
   return {
     initialized: true,
     authenticated: true,
@@ -62,8 +57,15 @@ async function fetchMe(): Promise<AuthState> {
     username: user.username,
     displayName: user.displayName,
     email: user.email,
-    roles: user.userRoles,
+    roles: user.roles,
   };
+}
+
+async function fetchMe(): Promise<AuthState> {
+  const { data } = await axios.get<{ data: AccountInfo }>("/api/accounts/me", {
+    withCredentials: true,
+  });
+  return toAuthState(data.data);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -100,9 +102,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [state.authenticated]);
 
   const login = useCallback(async (username: string, password: string): Promise<string> => {
-    await authLogin(username, password);
+    const user = await authLogin(username, password);
     localStorage.setItem("sessionHint", "1");
-    const userState = await fetchMe();
+    const userState = toAuthState(user);
     setState(userState);
     return userState.userId!;
   }, []);

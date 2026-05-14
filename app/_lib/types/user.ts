@@ -1,9 +1,9 @@
 export type UserRole = "ADMIN" | "POWER_USER" | "USER";
 
-export interface UserBasicResponse {
+export interface AccountInfo {
   id: string;
   username: string;
-  displayName: string;
   email: string;
-  userRoles: UserRole[];
+  displayName: string;
+  roles: UserRole[];
 }

@@ -10,4 +10,4 @@ export type {
   PostCreationRequest,
 } from "./post";
 export type { SingleCommentResponse, CommentResponse, NewCommentRequest } from "./comment";
-export type { UserRole, UserBasicResponse } from "./user";
+export type { UserRole, AccountInfo } from "./user";

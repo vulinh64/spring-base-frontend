@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { UserRole, UserBasicResponse } from "@/types";
-import { login as authLogin, logout as authLogout, refresh as authRefresh } from "./keycloak";
+import { login as authLogin, logout as authLogout, refresh as authRefresh } from "./client";
 import axios from "axios";
 
 interface AuthState {

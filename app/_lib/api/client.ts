@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { GenericResponse } from "@/types";
-import { refresh } from "@/auth/keycloak";
+import { refresh } from "@/auth/client";
 
 declare module "axios" {
   interface InternalAxiosRequestConfig {

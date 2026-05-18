@@ -5,5 +5,5 @@ export interface UserBasicResponse {
   username: string;
   displayName: string;
   email: string;
-  userRoles: UserRole[];
+  roles: UserRole[];
 }

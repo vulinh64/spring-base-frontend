@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -62,7 +63,7 @@ async function fetchMe(): Promise<AuthState> {
     username: user.username,
     displayName: user.displayName,
     email: user.email,
-    roles: user.userRoles,
+    roles: user.roles,
   };
 }
 
@@ -118,10 +119,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [state.roles]
   );
 
+  const value = useMemo(
+    () => ({ ...state, login, logout, hasRole }),
+    [state, login, logout, hasRole]
+  );
+
   return (
-    <AuthContext.Provider value={{ ...state, login, logout, hasRole }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
 

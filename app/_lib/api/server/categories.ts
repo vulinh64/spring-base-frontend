@@ -8,8 +8,6 @@ export async function fetchCategories(
   if (pageable?.page !== undefined) p.set("page", String(pageable.page));
   if (pageable?.size !== undefined) p.set("size", String(pageable.size));
   const q = p.toString();
-  return serverFetch<Page<CategoryResponse>>(
-    `/api/category/search${q ? `?${q}` : ""}`,
-    { cache: "no-store" }
-  );
+  const url = q ? `/category/search?${q}` : "/category/search";
+  return serverFetch<Page<CategoryResponse>>(url, { cache: "no-store" });
 }

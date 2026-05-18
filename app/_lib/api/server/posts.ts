@@ -20,7 +20,7 @@ function toQuery(pageable?: Pageable): string {
 }
 
 export async function fetchPost(slug: string): Promise<SinglePostResponse> {
-  return serverFetch<SinglePostResponse>(`/api/post/${slug}`, {
+  return serverFetch<SinglePostResponse>(`/post/${slug}`, {
     cache: "no-store",
   });
 }
@@ -29,7 +29,7 @@ export async function fetchPosts(
   pageable?: Pageable
 ): Promise<Page<PrefetchPostProjection>> {
   return serverFetch<Page<PrefetchPostProjection>>(
-    `/api/post${toQuery(pageable)}`,
+    `/post${toQuery(pageable)}`,
     { cache: "no-store" }
   );
 }
@@ -39,7 +39,7 @@ export async function fetchPostsByCategory(
   pageable?: Pageable
 ): Promise<Page<PrefetchPostProjection>> {
   return serverFetch<Page<PrefetchPostProjection>>(
-    `/api/post/category/${categorySlug}${toQuery(pageable)}`,
+    `/post/category/${categorySlug}${toQuery(pageable)}`,
     { cache: "no-store" }
   );
 }

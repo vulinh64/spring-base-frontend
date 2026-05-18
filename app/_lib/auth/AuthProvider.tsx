@@ -50,7 +50,7 @@ const UNAUTHENTICATED: AuthState = {
 };
 
 async function fetchMe(): Promise<AuthState> {
-  const { data } = await axios.get<{ data: UserBasicResponse }>("/api/auth/me", {
+  const { data } = await axios.get<{ data: UserBasicResponse }>("/api/accounts/me", {
     withCredentials: true,
   });
   const user = data.data;

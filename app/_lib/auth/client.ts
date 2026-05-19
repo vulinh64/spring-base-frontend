@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const CLIENT_ID = "spring-base";
+const CLIENT_ID = process.env.CLIENT_ID || "spring-base";
 const GRANT_TYPE_PASSWORD = "password";
 
 const authClient = axios.create({

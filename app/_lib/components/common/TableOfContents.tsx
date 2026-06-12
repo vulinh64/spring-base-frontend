@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import {slugify} from "@/utils/slugify.ts";
+import type { HeadingAnchor } from "@/utils/slugify";
 
 function InlineMarkdown({ text }: { text: string }) {
   return (
@@ -22,7 +22,7 @@ function InlineMarkdown({ text }: { text: string }) {
 }
 
 interface TableOfContentsProps {
-  headings: string[];
+  headings: HeadingAnchor[];
 }
 
 export function TableOfContents({ headings }: TableOfContentsProps) {
@@ -37,7 +37,9 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
     const ACTIVE_THRESHOLD = 120;    // active heading: ~below the fixed header
 
     const update = () => {
-      const h2s = Array.from(document.querySelectorAll("h2[id]"));
+      const h2s = headings
+        .map((heading) => document.getElementById(heading.id))
+        .filter((element): element is HTMLElement => element !== null);
       if (h2s.length === 0) return;
 
       // Button visibility: show when first H2 is within threshold of top
@@ -72,9 +74,9 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
 
   const panelWidth = 256;
 
-  const isActive = (heading: string) => slugify(heading) === activeId;
+  const isActive = (heading: HeadingAnchor) => heading.id === activeId;
 
-  const linkClass = (heading: string) =>
+  const linkClass = (heading: HeadingAnchor) =>
     `block text-sm transition-colors leading-snug ${
       isActive(heading)
         ? "text-green-400 font-medium"
@@ -84,10 +86,10 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   const desktopTocList = (
     <ul className="space-y-2 border-l border-gray-700 pl-3">
       {headings.map((heading) => (
-        <li key={heading} className="flex items-start gap-1.5">
+        <li key={heading.id} className="flex items-start gap-1.5">
           <span className={`mt-0.5 select-none text-xs ${isActive(heading) ? "text-green-500" : "text-gray-600"}`}>•</span>
-          <a href={`#${slugify(heading)}`} className={linkClass(heading)}>
-            <InlineMarkdown text={heading} />
+          <a href={`#${heading.id}`} className={linkClass(heading)}>
+            <InlineMarkdown text={heading.text} />
           </a>
         </li>
       ))}
@@ -97,13 +99,13 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   const mobileTocList = (
     <ul className="space-y-2">
       {headings.map((heading) => (
-        <li key={heading}>
+        <li key={heading.id}>
           <a
-            href={`#${slugify(heading)}`}
+            href={`#${heading.id}`}
             onClick={() => setIsOpen(false)}
             className={linkClass(heading)}
           >
-            <InlineMarkdown text={heading} />
+            <InlineMarkdown text={heading.text} />
           </a>
         </li>
       ))}

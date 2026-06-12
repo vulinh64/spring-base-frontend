@@ -85,6 +85,7 @@ export function PostDetailClient({
           title="Delete Post"
           message="Are you sure you want to delete this post? This action cannot be undone."
           confirmLabel="Delete"
+          pending={deleteMutation.isPending}
           onConfirm={() => deleteMutation.mutate()}
           onCancel={() => setShowDeleteDialog(false)}
         />

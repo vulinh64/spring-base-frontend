@@ -16,7 +16,7 @@ import { formatDateTime } from "@/utils/date";
 
 function PostRevisionsPageInner() {
   const { slug } = useParams<{ slug: string }>();
-  const { data: post, isLoading: loadingPost } = usePost(slug!);
+  const { data: post, isLoading: loadingPost, error: postError } = usePost(slug);
   const [page, setPage] = useState(0);
   const { data, isLoading, error } = usePostRevisions(post?.id ?? "", {
     page,
@@ -39,6 +39,7 @@ function PostRevisionsPageInner() {
   });
 
   if (loadingPost || isLoading) return <LoadingSpinner />;
+  if (postError || !post) return <ErrorBanner message="Failed to load post." />;
   if (error) return <ErrorBanner message="Failed to load revisions." />;
 
   return (
@@ -114,6 +115,7 @@ function PostRevisionsPageInner() {
           title="Apply Revision"
           message={`Apply revision #${confirmRevision} to this post? The current content will be replaced.`}
           confirmLabel="Apply"
+          pending={applyMutation.isPending}
           onConfirm={() => applyMutation.mutate(confirmRevision)}
           onCancel={() => setConfirmRevision(null)}
         />

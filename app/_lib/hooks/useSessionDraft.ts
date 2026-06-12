@@ -11,8 +11,8 @@ export function useSessionDraft<T extends Record<string, unknown>>(draftKey: str
   }, []);
 
   const restoreDraft = useCallback((): T | null => {
-    return loadDraft(draftKey) as T | null;
-  }, [draftKey]);
+    return loadDraft(draftKey, userId) as T | null;
+  }, [draftKey, userId]);
 
   const discardDraft = useCallback(() => {
     clearDraft(draftKey);

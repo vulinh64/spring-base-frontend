@@ -67,6 +67,20 @@ async function fetchMe(): Promise<AuthState> {
   };
 }
 
+function isUnauthorized(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 401;
+}
+
+async function restoreSession(): Promise<AuthState> {
+  try {
+    return await fetchMe();
+  } catch (error) {
+    if (!isUnauthorized(error)) throw error;
+    await authRefresh();
+    return fetchMe();
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(() => {
     if (typeof window === "undefined") return UNAUTHENTICATED;
@@ -78,10 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // On mount, try to restore session only if a hint says we might have one
   useEffect(() => {
     if (!localStorage.getItem("sessionHint")) return;
-    fetchMe()
+    restoreSession()
       .then(setState)
-      .catch(() => {
-        localStorage.removeItem("sessionHint");
+      .catch((error) => {
+        if (isUnauthorized(error)) {
+          localStorage.removeItem("sessionHint");
+        }
         setState(UNAUTHENTICATED);
       });
   }, []);
@@ -91,9 +107,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!state.authenticated) return;
 
     const intervalId = setInterval(() => {
-      authRefresh().catch(() => {
-        localStorage.removeItem("sessionHint");
-        setState(UNAUTHENTICATED);
+      authRefresh().catch((error) => {
+        if (isUnauthorized(error)) {
+          window.dispatchEvent(new Event("session-expired"));
+          localStorage.removeItem("sessionHint");
+          setState(UNAUTHENTICATED);
+        }
       });
     }, 2 * 60 * 1000);
 

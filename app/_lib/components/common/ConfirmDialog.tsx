@@ -2,6 +2,7 @@ interface ConfirmDialogProps {
   title: string;
   message: string;
   confirmLabel?: string;
+  pending?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -10,6 +11,7 @@ export function ConfirmDialog({
   title,
   message,
   confirmLabel = "Confirm",
+  pending = false,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -21,15 +23,20 @@ export function ConfirmDialog({
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="rounded border border-gray-700 px-4 py-1.5 text-sm text-gray-300 hover:bg-gray-800"
+            disabled={pending}
+            className="rounded border border-gray-700 px-4 py-1.5 text-sm text-gray-300 hover:bg-gray-800 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
-            onClick={onConfirm}
-            className="rounded bg-red-600 px-4 py-1.5 text-sm text-white hover:bg-red-700"
+            onClick={(event) => {
+              event.currentTarget.disabled = true;
+              onConfirm();
+            }}
+            disabled={pending}
+            className="rounded bg-red-600 px-4 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
           >
-            {confirmLabel}
+            {pending ? `${confirmLabel}...` : confirmLabel}
           </button>
         </div>
       </div>

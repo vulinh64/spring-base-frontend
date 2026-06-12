@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { fetchPostsByCategory } from "@/api/server/posts";
 import { PostList } from "@/components/post/PostList";
 import { PaginationNav } from "@/components/common/PaginationNav";
+import { BackendError } from "@/api/server-client";
+import { parsePageSegments } from "@/utils/pagination";
 
 interface Props {
   params: Promise<{ slug: string; page?: string[] }>;
@@ -13,25 +15,22 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, page: segments } = await params;
-  const frontendPage = segments ? Number(segments[0]) : 1;
-  try {
-    const data = await fetchPostsByCategory(slug, { page: 0, size: 1 });
-    const name = data.content[0]?.category?.displayName ?? slug;
-    return {
-      title: frontendPage > 1 ? `Category: ${name} — Page ${frontendPage}` : `Category: ${name}`,
-      description: `Posts in the "${name}" category`,
-    };
-  } catch {
-    return { title: "Category not found" };
-  }
+  const frontendPage = parsePageSegments(segments) ?? 1;
+  return {
+    title:
+      frontendPage > 1
+        ? `Category: ${slug} — Page ${frontendPage}`
+        : `Category: ${slug}`,
+    description: `Posts in the "${slug}" category`,
+  };
 }
 
 export default async function CategoryPostsPage({ params }: Props) {
   const { slug, page: segments } = await params;
 
-  const frontendPage = segments ? Number(segments[0]) : 1;
+  const frontendPage = parsePageSegments(segments);
 
-  if (isNaN(frontendPage) || frontendPage < 1) redirect(`/category/${slug}`);
+  if (frontendPage === null) redirect(`/category/${slug}`);
   // /category/slug/1 → canonical /category/slug
   if (segments && frontendPage === 1) redirect(`/category/${slug}`);
 
@@ -45,8 +44,11 @@ export default async function CategoryPostsPage({ params }: Props) {
       size,
       sort: ["createdDateTime,desc", "updatedDateTime,desc"],
     });
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof BackendError && error.status === 404) {
+      notFound();
+    }
+    throw error;
   }
 
   // Out-of-range page → redirect to last page

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { fetchPost } from "@/api/server/posts";
+import { BackendError } from "@/api/server-client";
 import { CategoryBadge } from "@/components/category/CategoryBadge";
 import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
 import { formatDateTime } from "@/utils/date";
 import { TableOfContents } from "@/components/common/TableOfContents";
+import { extractHeadingAnchors } from "@/utils/slugify";
 import { PostDetailClient } from "./post-detail-client";
 
 interface Props {
@@ -29,8 +30,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         tags: post.tags.map((t) => t.displayName),
       },
     };
-  } catch {
-    return { title: "Post not found" };
+  } catch (error) {
+    if (error instanceof BackendError && error.status === 404) {
+      return { title: "Post not found" };
+    }
+    throw error;
   }
 }
 
@@ -40,13 +44,14 @@ export default async function PostDetailPage({ params }: Props) {
   let post;
   try {
     post = await fetchPost(slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof BackendError && error.status === 404) {
+      notFound();
+    }
+    throw error;
   }
 
-  const headings = [...post.postContent.matchAll(/^## (.+)$/gm)].map((m) =>
-    m[1].trim()
-  );
+  const headings = extractHeadingAnchors(post.postContent);
   const hasToC = headings.length > 1;
 
   return (
@@ -105,7 +110,10 @@ export default async function PostDetailPage({ params }: Props) {
 
           {/* Content */}
           <div className="mb-12">
-            <MarkdownRenderer content={post.postContent} />
+            <MarkdownRenderer
+              content={post.postContent}
+              headingAnchors={headings}
+            />
           </div>
         </article>
 

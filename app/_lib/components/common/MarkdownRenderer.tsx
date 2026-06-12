@@ -8,7 +8,10 @@ import { remarkAlert } from "remark-github-blockquote-alert";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.min.css";
-import {slugify} from "@/utils/slugify.ts";
+import {
+  createHeadingIdGenerator,
+  type HeadingAnchor,
+} from "@/utils/slugify";
 
 function extractText(node: ReactNode): string {
   if (typeof node === "string") return node;
@@ -139,35 +142,61 @@ const components = {
       </summary>
     );
   },
-  h2: ({ children }: { children?: ReactNode }) => {
-    const text = extractText(children as ReactNode);
-    const id = slugify(text);
-    return (
-      <h2 id={id} className="group flex items-center gap-2 scroll-mt-24">
-        <span>{children}</span>
-        <a
-          href={`#${id}`}
-          className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-blue-400 transition-opacity no-underline font-normal text-base"
-          aria-label={`Link to ${text}`}
-        >
-          #
-        </a>
-      </h2>
-    );
-  },
 };
 
 interface MarkdownRendererProps {
   content: string;
+  headingAnchors?: HeadingAnchor[];
 }
 
-export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+export function MarkdownRenderer({
+  content,
+  headingAnchors,
+}: MarkdownRendererProps) {
+  const anchorsByOffset = new Map(
+    headingAnchors
+      ?.filter(
+        (anchor): anchor is HeadingAnchor & { sourceOffset: number } =>
+          anchor.sourceOffset !== undefined
+      )
+      .map((anchor) => [anchor.sourceOffset, anchor])
+  );
+  const createHeadingId = createHeadingIdGenerator(
+    headingAnchors?.map((anchor) => anchor.id)
+  );
+  const markdownComponents: Components = {
+    ...components,
+    h2: ({ children, node }) => {
+      const text = extractText(children);
+      const offset = node?.position?.start.offset;
+      const extractedAnchor =
+        offset === undefined ? undefined : anchorsByOffset.get(offset);
+      const id = extractedAnchor?.id ?? createHeadingId(text);
+      return (
+        <h2
+          id={id}
+          data-toc-heading={extractedAnchor ? "true" : undefined}
+          className="group flex items-center gap-2 scroll-mt-24"
+        >
+          <span>{children}</span>
+          <a
+            href={`#${id}`}
+            className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-blue-400 transition-opacity no-underline font-normal text-base"
+            aria-label={`Link to ${text}`}
+          >
+            #
+          </a>
+        </h2>
+      );
+    },
+  };
+
   return (
     <div className="prose prose-invert max-w-none">
       <Markdown
         remarkPlugins={[remarkGfm, [remarkAlert, { legacyTitle: true }]]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
-        components={components as Components}
+        components={markdownComponents}
       >
         {content}
       </Markdown>

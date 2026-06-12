@@ -7,13 +7,29 @@ import { getDraftUserId, clearAllDrafts } from "@/utils/sessionDraft";
 import { ErrorBanner } from "@/components/common/ErrorBanner";
 import { useToast } from "@/components/common/Toast";
 
+function getSafeRedirect(redirect: string | null): string {
+  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
+    return "/";
+  }
+
+  try {
+    const baseUrl = "http://internal";
+    const parsed = new URL(redirect, baseUrl);
+    return parsed.origin === baseUrl
+      ? `${parsed.pathname}${parsed.search}${parsed.hash}`
+      : "/";
+  } catch {
+    return "/";
+  }
+}
+
 function LoginPageInner() {
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useToast();
 
-  const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = getSafeRedirect(searchParams.get("redirect"));
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

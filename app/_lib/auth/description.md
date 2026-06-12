@@ -1,0 +1,5 @@
+# `app/_lib/auth`
+
+This folder owns browser authentication behavior. `client.ts` sends login, logout, and refresh requests to the proxied auth service and coalesces concurrent refresh attempts into one request. `AuthProvider.tsx` restores account details only when `sessionHint` exists, retries restoration through token refresh after a `401`, exposes authentication state and role checks, and refreshes the session every two minutes while authenticated. Transient restoration and refresh failures do not remove the session hint; rejected credentials clear local authentication state.
+
+Authentication is cookie-based. Local storage holds only a `sessionHint`, never credentials or tokens. Both the shared API client's exhausted-`401` flow and an unauthorized (`401`) `AuthProvider` background-refresh failure dispatch `session-expired` before redirecting or clearing authentication so active drafts can persist. Transient background-refresh failures leave authentication state unchanged. Frontend role checks are not a security boundary.

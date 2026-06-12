@@ -16,7 +16,7 @@ import {
 
 // Validation helper functions
 export const validateRequiredNumber = (
-    value: any,
+    value: unknown,
     errorMessage: string = "Hãy nhập số hợp lệ"
 ): string | null => {
     return value !== EMPTY && value !== null && value !== undefined && !isNaN(Number(value))
@@ -43,7 +43,7 @@ export const validateRange = (
     return result;
 };
 
-export const validateNonNegative = (value: any): string | null => {
+export const validateNonNegative = (value: unknown): string | null => {
     const numValue = parseFloat(String(value));
     if (!isNaN(numValue) && numValue < 0) {
         return "Hãy nhập số hợp lệ";
@@ -51,7 +51,7 @@ export const validateNonNegative = (value: any): string | null => {
     return null;
 };
 
-export const normalizeNumber = (value: any, defaultValue: number = 0, parser: (v: string) => number = parseFloat): number => {
+export const normalizeNumber = (value: unknown, defaultValue: number = 0, parser: (v: string) => number = parseFloat): number => {
     const parsed = parser(String(value));
     return isNaN(parsed) ? defaultValue : Math.max(0, parsed);
 };
@@ -108,13 +108,12 @@ export const calculateVietnamTax = (
 
     const insuranceAmount: number = cappedBaseSalary * (INSURANCE_RATES.social + INSURANCE_RATES.health + INSURANCE_RATES.unemployment);
 
-    // @ts-ignore
-    const dependantDeduction: number = numberOfDependants * DEDUCTION_PER_DEPENDANT[isNewTaxPeriod];
+    const dependantDeduction: number =
+        numberOfDependants * (isNewTaxPeriod ? DEDUCTION_PER_DEPENDANT.true : DEDUCTION_PER_DEPENDANT.false);
 
     let taxableIncome: number = grossSalary
         - insuranceAmount
-        // @ts-ignore
-        - NON_TAXABLE_INCOME_DEDUCTION[isNewTaxPeriod]
+        - (isNewTaxPeriod ? NON_TAXABLE_INCOME_DEDUCTION.true : NON_TAXABLE_INCOME_DEDUCTION.false)
         - dependantDeduction
         - otherDeduction;
 
@@ -125,8 +124,7 @@ export const calculateVietnamTax = (
     let taxAmount: number = 0;
     let taxLevelOrdinal: number = 0;
 
-    // @ts-ignore
-    const progressiveTax = TAX_LEVELS[isNewTaxPeriod];
+    const progressiveTax = isNewTaxPeriod ? TAX_LEVELS.true : TAX_LEVELS.false;
 
     while (taxLevelOrdinal < progressiveTax.length - 1) {
         const currentLevel: TaxLevel = progressiveTax[taxLevelOrdinal];

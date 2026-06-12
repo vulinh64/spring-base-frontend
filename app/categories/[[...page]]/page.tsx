@@ -4,6 +4,7 @@ import Link from "next/link";
 import { fetchCategories } from "@/api/server/categories";
 import { PaginationNav } from "@/components/common/PaginationNav";
 import { CreateCategoryForm, DeleteCategoryButton } from "../categories-admin";
+import { parsePageSegments, parsePageSize, sizeQuery } from "@/utils/pagination";
 
 interface Props {
   params: Promise<{ page?: string[] }>;
@@ -12,7 +13,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { page: segments } = await params;
-  const frontendPage = segments ? Number(segments[0]) : 1;
+  const frontendPage = parsePageSegments(segments) ?? 1;
   return {
     title: frontendPage > 1 ? `Categories — Page ${frontendPage}` : "Categories",
     description: "Browse all categories",
@@ -23,12 +24,12 @@ export default async function CategoriesPage({ params, searchParams }: Props) {
   const { page: segments } = await params;
   const { size: sizeParam } = await searchParams;
 
-  const frontendPage = segments ? Number(segments[0]) : 1;
-  const size = Number(sizeParam || "10");
+  const frontendPage = parsePageSegments(segments);
+  const size = parsePageSize(sizeParam);
 
-  if (isNaN(frontendPage) || frontendPage < 1) redirect("/categories");
+  if (frontendPage === null || size === null) redirect("/categories");
   // /categories/1 → canonical /categories
-  if (segments && frontendPage === 1) redirect("/categories");
+  if (segments && frontendPage === 1) redirect(`/categories${sizeQuery(size)}`);
 
   const backendPage = frontendPage - 1;
 
@@ -38,8 +39,7 @@ export default async function CategoriesPage({ params, searchParams }: Props) {
   if (data.page.totalPages > 0 && backendPage >= data.page.totalPages) {
     const lastFrontend = data.page.totalPages;
     const pathPart = lastFrontend === 1 ? "" : `/${lastFrontend}`;
-    const sizePart = size !== 10 ? `?size=${size}` : "";
-    redirect(`/categories${pathPart}${sizePart}`);
+    redirect(`/categories${pathPart}${sizeQuery(size)}`);
   }
 
   return (
@@ -53,12 +53,14 @@ export default async function CategoriesPage({ params, searchParams }: Props) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {data.content.map((category) => (
-            <Link
+            <div
               key={category.id}
-              href={`/category/${category.categorySlug}`}
               className="rounded-lg border border-gray-800 bg-gray-900 p-4 flex items-start justify-between hover:border-gray-700 transition-colors"
             >
-              <div>
+              <Link
+                href={`/category/${category.categorySlug}`}
+                className="min-w-0 flex-1"
+              >
                 <h3 className="font-medium text-gray-100">
                   {category.displayName}
                 </h3>
@@ -69,9 +71,9 @@ export default async function CategoriesPage({ params, searchParams }: Props) {
                   {category.postCount}{" "}
                   {category.postCount === 1 ? "post" : "posts"}
                 </p>
-              </div>
+              </Link>
               <DeleteCategoryButton categoryId={category.id} />
-            </Link>
+            </div>
           ))}
         </div>
       )}

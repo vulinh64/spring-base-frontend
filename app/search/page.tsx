@@ -11,6 +11,11 @@ import { ErrorBanner } from "@/components/common/ErrorBanner";
 function SearchPageInner() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") ?? "";
+
+  return <SearchResults key={query} query={query} />;
+}
+
+function SearchResults({ query }: { query: string }) {
   const [page, setPage] = useState(0);
   const { data, isLoading, error } = useSearchPosts(query, {
     page,

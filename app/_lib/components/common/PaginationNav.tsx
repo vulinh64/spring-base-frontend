@@ -2,8 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Pagination } from "./Pagination";
-
-const DEFAULT_SIZE = 10;
+import { DEFAULT_PAGE_SIZE } from "@/utils/pagination";
 
 interface PaginationNavProps {
   totalPages: number;
@@ -27,7 +26,7 @@ export function PaginationNav({
   function navigate(newBackendPage: number, newSize: number) {
     const frontendPage = newBackendPage + 1;
     const pathPart = frontendPage === 1 ? "" : `/${frontendPage}`;
-    const sizePart = newSize !== DEFAULT_SIZE ? `?size=${newSize}` : "";
+    const sizePart = newSize !== DEFAULT_PAGE_SIZE ? `?size=${newSize}` : "";
     router.push(`${basePath}${pathPart}${sizePart}`);
   }
 

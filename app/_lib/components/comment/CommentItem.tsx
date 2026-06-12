@@ -7,6 +7,7 @@ import { useAuth } from "@/auth/AuthProvider";
 import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
 import { formatDateTime } from "@/utils/date";
 import { Hr } from "@/components/common/Hr";
+import { useToast } from "@/components/common/Toast";
 
 interface CommentItemProps {
   comment: SingleCommentResponse;
@@ -23,6 +24,7 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
   const [overflows, setOverflows] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   useEffect(() => {
     if (contentRef.current) {
@@ -36,7 +38,9 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
       setEditing(false);
       setPreviewing(false);
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+      toast.success("Comment updated.");
     },
+    onError: () => toast.error("Failed to update comment."),
   });
 
   function handleSubmit(e: SubmitEvent) {

@@ -8,6 +8,7 @@ import { MarkdownEditor } from "@/components/common/MarkdownEditor";
 import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
 import { ErrorBanner } from "@/components/common/ErrorBanner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { findDuplicateHeadingAnchorIds } from "@/utils/slugify";
 import type { PostCreationRequest } from "@/types";
 
 interface InitialValues {
@@ -25,7 +26,6 @@ interface PostEditorFormProps {
   submitLabel: string;
   pendingLabel: string;
   initialValues?: InitialValues;
-  defaultDirty?: boolean;
   onSubmit: (request: PostCreationRequest) => void;
   isPending: boolean;
   error: string | null;
@@ -37,7 +37,6 @@ export function PostEditorForm({
   submitLabel,
   pendingLabel,
   initialValues,
-  defaultDirty = false,
   onSubmit,
   isPending,
   error,
@@ -55,12 +54,12 @@ export function PostEditorForm({
   const [tagsInput, setTagsInput] = useState((draft?.tagsInput as string) ?? initialValues?.tagsInput ?? "");
   const [previewing, setPreviewing] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // Snapshot of field values at mount — used to determine if anything has changed
   const [baseline] = useState({ title, excerpt, slug, postContent, categoryId, tagsInput });
 
   const isDirty =
-    defaultDirty ||
     title !== baseline.title ||
     excerpt !== baseline.excerpt ||
     slug !== baseline.slug ||
@@ -79,29 +78,24 @@ export function PostEditorForm({
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
 
-  // Intercept browser back/forward button (soft navigation via History API)
-  useEffect(() => {
-    if (!isDirty) return;
-
-    // Push a guard entry so the back button hits us before actually leaving
-    history.pushState(null, "", window.location.href);
-
-    const handlePopState = () => {
-      // Re-push so the URL stays correct while the dialog is open
-      history.pushState(null, "", window.location.href);
-      setShowLeaveConfirm(true);
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [isDirty]);
-
   useEffect(() => {
     updateDraft({ title, excerpt, slug, postContent, categoryId, tagsInput });
   }, [title, excerpt, slug, postContent, categoryId, tagsInput, updateDraft]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const duplicateHeadingAnchorIds = findDuplicateHeadingAnchorIds(postContent);
+
+    if (duplicateHeadingAnchorIds.length > 0) {
+      setValidationError(
+        `Heading anchors must be unique. Rename headings that generate: ${duplicateHeadingAnchorIds
+          .map((id) => `#${id}`)
+          .join(", ")}.`
+      );
+      return;
+    }
+
+    setValidationError(null);
     const tags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
     onSubmit({
       title,
@@ -180,17 +174,16 @@ export function PostEditorForm({
           confirmLabel="Leave"
           onConfirm={() => {
             setShowLeaveConfirm(false);
-            // Go back twice: once past the guard entry we pushed, once to the actual previous page
-            history.go(-2);
+            router.back();
           }}
           onCancel={() => setShowLeaveConfirm(false)}
         />
       )}
 
       <h1 className="text-2xl font-bold text-gray-100 mb-6">{pageTitle}</h1>
-      {error && (
+      {(validationError ?? error) && (
         <div className="mb-4">
-          <ErrorBanner message={error} />
+          <ErrorBanner message={(validationError ?? error)!} />
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -251,7 +244,13 @@ export function PostEditorForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Content</label>
-          <MarkdownEditor content={postContent} onChange={setPostContent} />
+          <MarkdownEditor
+            content={postContent}
+            onChange={(content) => {
+              setPostContent(content);
+              setValidationError(null);
+            }}
+          />
         </div>
         <div className="flex gap-3">
           <button

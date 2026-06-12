@@ -92,6 +92,7 @@ export function DeleteCategoryButton({
           title="Delete Category"
           message="Are you sure you want to delete this category?"
           confirmLabel="Delete"
+          pending={deleteMutation.isPending}
           onConfirm={() => deleteMutation.mutate()}
           onCancel={() => setShowConfirm(false)}
         />

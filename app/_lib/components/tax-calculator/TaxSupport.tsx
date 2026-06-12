@@ -61,8 +61,7 @@ export const LOWEST_PROBATION_SALARY_TO_BE_TAXED = 2000000;
 
 export const EMPTY = "";
 
-// @ts-expect-error I am fine
-export const TAX_LEVELS: Record<boolean, TaxLevel> = {
+export const TAX_LEVELS = {
     false: [
         {
             threshold: 0,
@@ -123,7 +122,7 @@ export const TAX_LEVELS: Record<boolean, TaxLevel> = {
             rate: 0.35
         },
     ]
-};
+} satisfies Record<"false" | "true", TaxLevel[]>;
 
 export interface TaxFormData {
     basicSalary: number;

@@ -8,6 +8,8 @@ const authClient = axios.create({
   withCredentials: true,
 });
 
+let refreshPromise: Promise<void> | null = null;
+
 export async function login(username: string, password: string): Promise<void> {
   await authClient.post("/login", {
     grantType: GRANT_TYPE_PASSWORD,
@@ -22,5 +24,14 @@ export async function logout(): Promise<void> {
 }
 
 export async function refresh(): Promise<void> {
-  await authClient.post("/refresh");
+  if (!refreshPromise) {
+    refreshPromise = authClient
+      .post("/refresh")
+      .then(() => undefined)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  await refreshPromise;
 }

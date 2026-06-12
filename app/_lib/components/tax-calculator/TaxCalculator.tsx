@@ -22,7 +22,7 @@ import {
     type Warnings
 } from "./TaxSupport";
 
-const inputClass = "w-full border-none outline-none bg-transparent text-xl font-['JetBrains_Mono'] text-gray-100 mb-1";
+const inputClass = "tax-numeric w-full border-none outline-none bg-transparent text-xl text-gray-100 mb-1";
 const fieldsetBase = "border rounded-lg p-3 relative focus-within:border-blue-600 transition-colors";
 const legendClass = "text-[85%] text-gray-400";
 
@@ -58,6 +58,35 @@ export default function TaxCalculator(): JSX.Element {
     const [useVietnameseLocale, setUseVietnameseLocale] = useState(true);
 
     const locale = useVietnameseLocale ? "vi-VN" : undefined;
+    const labels = useVietnameseLocale
+        ? {
+            title: "Tính thuế TNCN",
+            onProbation: "Đang thử việc",
+            grossSalary: "Tổng thu nhập trước thuế",
+            basicSalary: "Mức lương đóng BH",
+            otherDeduction: "Phụ cấp không tính thuế",
+            dependants: "Số người phụ thuộc",
+            taxPeriod: "Kỳ tính thuế",
+            before2026: "Trước 2026",
+            from2026: "Từ 2026",
+            probationPercentage: "% mức lương cơ bản (85-100)",
+            calculate: "Tính thuế TNCN",
+            nonTaxableIncomeCategories: "Tham khảo danh mục phụ cấp không tính thuế TNCN",
+        }
+        : {
+            title: "Calculate Personal Tax",
+            onProbation: "On Probation",
+            grossSalary: "Pre-tax income",
+            basicSalary: "Basic (insurance) income",
+            otherDeduction: "Non-taxable income",
+            dependants: "Number of dependants",
+            taxPeriod: "Tax period",
+            before2026: "Before Jan 2026",
+            from2026: "From Jan 2026",
+            probationPercentage: "Probation percentage (85-100)",
+            calculate: "Calculate Personal Tax",
+            nonTaxableIncomeCategories: "Non-taxable income categories",
+        };
 
     // Formatted display values
     const [displayValues, setDisplayValues] = useState({
@@ -249,7 +278,7 @@ export default function TaxCalculator(): JSX.Element {
     return (
         <div className="w-full mx-auto p-4 mt-10 mb-10">
             <form onSubmit={handleSubmit} className="mx-auto md:w-1/2">
-                <h1 className="text-3xl font-bold text-gray-100 text-center mb-6">Tính thuế TNCN</h1>
+                <h1 className="text-3xl font-bold text-gray-100 text-center mb-6">{labels.title}</h1>
                 <Hr className="mb-6" />
                 <div className="flex flex-wrap gap-6 mb-4">
                     <label className="flex items-center gap-3 cursor-pointer text-gray-300">
@@ -262,7 +291,7 @@ export default function TaxCalculator(): JSX.Element {
                             />
                             <span className="tax-slider"></span>
                         </label>
-                        Đang thử việc
+                        {labels.onProbation}
                     </label>
 
                     <label className="flex items-center gap-3 cursor-pointer text-gray-300">
@@ -270,6 +299,7 @@ export default function TaxCalculator(): JSX.Element {
                             <input
                                 type="checkbox"
                                 checked={useVietnameseLocale}
+                                aria-label="Use Vietnamese language and number formatting"
                                 onChange={(e: { target: { checked: boolean | ((prevState: boolean) => boolean) } }) =>
                                     setUseVietnameseLocale(e.target.checked)
                                 }
@@ -285,7 +315,7 @@ export default function TaxCalculator(): JSX.Element {
                         fieldsetBase,
                         errors.grossSalary ? "border-red-500" : warnings.grossSalary ? "border-yellow-500" : "border-gray-700"
                     )}>
-                        <legend className={legendClass}>Tổng thu nhập trước thuế</legend>
+                        <legend className={legendClass}>{labels.grossSalary}</legend>
                         <input type="text" name="grossSalary" value={displayValues.grossSalary} onChange={handleInputChange} onBlur={handleBlur} onKeyDown={handleKeyDown} className={inputClass} />
                     </fieldset>
                     {errors.grossSalary && <p className="tax-error text-red-500 text-sm mt-4">{errors.grossSalary}</p>}
@@ -299,7 +329,7 @@ export default function TaxCalculator(): JSX.Element {
                                 fieldsetBase,
                                 errors.basicSalary ? "border-red-500" : warnings.basicSalary ? "border-yellow-500" : "border-gray-700"
                             )}>
-                                <legend className={legendClass}>Mức lương đóng BH</legend>
+                                <legend className={legendClass}>{labels.basicSalary}</legend>
                                 <input type="text" name="basicSalary" value={displayValues.basicSalary} onChange={handleInputChange} onBlur={handleBlur} onKeyDown={handleKeyDown} className={inputClass} />
                             </fieldset>
                             {errors.basicSalary && <p className="tax-error text-red-500 text-sm mt-4">{errors.basicSalary}</p>}
@@ -311,7 +341,7 @@ export default function TaxCalculator(): JSX.Element {
                                 fieldsetBase,
                                 errors.otherDeduction ? "border-red-500" : "border-gray-700"
                             )}>
-                                <legend className="text-[85%] text-lime-400">Phụ cấp không tính thuế</legend>
+                                <legend className="text-[85%] text-lime-400">{labels.otherDeduction}</legend>
                                 <input type="text" name="otherDeduction" value={displayValues.otherDeduction} onChange={handleInputChange} onBlur={handleBlur} onKeyDown={handleKeyDown} className={inputClass} />
                             </fieldset>
                             {errors.otherDeduction && <p className="tax-error text-red-500 text-sm mt-4">{errors.otherDeduction}</p>}
@@ -322,7 +352,7 @@ export default function TaxCalculator(): JSX.Element {
                                 fieldsetBase,
                                 errors.dependants ? "border-red-500" : "border-gray-700"
                             )}>
-                                <legend className={legendClass}>Số người phụ thuộc</legend>
+                                <legend className={legendClass}>{labels.dependants}</legend>
                                 <input type="number" name="dependants" value={formData.dependants} onChange={handleInputChange} onBlur={handleBlur} onKeyDown={handleKeyDown} className={inputClass} />
                             </fieldset>
                             {errors.dependants && <p className="tax-error text-red-500 text-sm mt-4">{errors.dependants}</p>}
@@ -330,15 +360,15 @@ export default function TaxCalculator(): JSX.Element {
 
                         <div className="mt-4 mb-4">
                             <fieldset className={clsx(fieldsetBase, "border-gray-700")}>
-                                <legend className={legendClass}>Kỳ tính thuế</legend>
+                                <legend className={legendClass}>{labels.taxPeriod}</legend>
                                 <div className="flex flex-row gap-2 pt-2">
                                     <label className="flex items-center gap-2 cursor-pointer w-1/2 text-gray-300">
                                         <input type="radio" name="isNewTaxPeriod" value="false" checked={!formData.isNewTaxPeriod} onChange={handleInputChange} className="tax-radio" />
-                                        Trước 2026
+                                        {labels.before2026}
                                     </label>
                                     <label className="flex items-center gap-2 cursor-pointer w-1/2 text-gray-300">
                                         <input type="radio" name="isNewTaxPeriod" value="true" checked={formData.isNewTaxPeriod} onChange={handleInputChange} className="tax-radio" />
-                                        Từ 2026
+                                        {labels.from2026}
                                     </label>
                                 </div>
                             </fieldset>
@@ -352,7 +382,7 @@ export default function TaxCalculator(): JSX.Element {
                             fieldsetBase,
                             errors.probationPercentage ? "border-red-500" : "border-gray-700"
                         )}>
-                            <legend className={legendClass}>% mức lương cơ bản (85-100)</legend>
+                            <legend className={legendClass}>{labels.probationPercentage}</legend>
                             <input type="number" name="probationPercentage" value={displayValues.probationPercentage} onChange={handleInputChange} onBlur={handleBlur} onKeyDown={handleKeyDown} className={inputClass} />
                         </fieldset>
                         {errors.probationPercentage && <p className="tax-error text-red-500 text-sm mt-4">{errors.probationPercentage}</p>}
@@ -363,7 +393,7 @@ export default function TaxCalculator(): JSX.Element {
                     type="submit"
                     className="w-full mt-6 mb-6 rounded bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
                 >
-                    Tính thuế TNCN
+                    {labels.calculate}
                 </button>
 
                 {result && (
@@ -376,7 +406,7 @@ export default function TaxCalculator(): JSX.Element {
                             {!result.isProbation && (
                                 <div>
                                     <dt>Lương đóng BH:</dt>
-                                    <dd className="font-['JetBrains_Mono']">
+                                    <dd className="tax-numeric">
                                         {result.cappedBaseSalary && !isNaN(result.cappedBaseSalary)
                                             ? `${Number(result.cappedBaseSalary).toLocaleString(locale)} đ`
                                             : "N/A"}
@@ -386,7 +416,7 @@ export default function TaxCalculator(): JSX.Element {
 
                             <div>
                                 <dt>Lương trước thuế:</dt>
-                                <dd className="font-['JetBrains_Mono']">
+                                <dd className="tax-numeric">
                                     {result.grossSalary && !isNaN(Number(result.grossSalary))
                                         ? `${Number(result.grossSalary).toLocaleString(locale)} đ`
                                         : "N/A"}
@@ -396,7 +426,7 @@ export default function TaxCalculator(): JSX.Element {
                             {!result.isProbation && (
                                 <div>
                                     <dt>Số người phụ thuộc:</dt>
-                                    <dd className="font-['JetBrains_Mono']">{Number(result.dependants).toLocaleString(locale)}</dd>
+                                    <dd className="tax-numeric">{Number(result.dependants).toLocaleString(locale)}</dd>
                                 </div>
                             )}
 
@@ -404,11 +434,11 @@ export default function TaxCalculator(): JSX.Element {
                                 <>
                                     <div>
                                         <dt>% mức lương thử việc:</dt>
-                                        <dd className="font-['JetBrains_Mono']">{`${result.probation.probationPercentage}%`}</dd>
+                                        <dd className="tax-numeric">{`${result.probation.probationPercentage}%`}</dd>
                                     </div>
                                     <div>
                                         <dt>Lương thử việc:</dt>
-                                        <dd className="font-['JetBrains_Mono']">{`${result.probation.probationSalary.toLocaleString(locale)} đ`}</dd>
+                                        <dd className="tax-numeric">{`${result.probation.probationSalary.toLocaleString(locale)} đ`}</dd>
                                     </div>
                                 </>
                             )}
@@ -418,18 +448,18 @@ export default function TaxCalculator(): JSX.Element {
                             {!result.isProbation && result.nonProbation && (
                                 <div>
                                     <dt>Tổng đóng BH:</dt>
-                                    <dd className="font-['JetBrains_Mono']">{`${result.nonProbation.insuranceAmount.toLocaleString(locale)} đ`}</dd>
+                                    <dd className="tax-numeric">{`${result.nonProbation.insuranceAmount.toLocaleString(locale)} đ`}</dd>
                                 </div>
                             )}
 
                             <div>
                                 <dt>Thuế phải nộp:</dt>
-                                <dd className="font-['JetBrains_Mono']">{`${result.taxedAmount.toLocaleString(locale)} đ`}</dd>
+                                <dd className="tax-numeric">{`${result.taxedAmount.toLocaleString(locale)} đ`}</dd>
                             </div>
 
                             <div>
                                 <dt>Thực lãnh:</dt>
-                                <dd className="font-bold font-['JetBrains_Mono'] text-blue-500">{`${result.netSalary.toLocaleString(locale)} đ`}</dd>
+                                <dd className="tax-numeric font-bold text-blue-500">{`${result.netSalary.toLocaleString(locale)} đ`}</dd>
                             </div>
                         </dl>
                     </details>
@@ -443,7 +473,7 @@ export default function TaxCalculator(): JSX.Element {
                             rel="noopener noreferrer"
                             className="text-blue-400 hover:text-blue-300 transition-colors"
                         >
-                            Tham khảo danh mục phụ cấp không tính thuế TNCN
+                            {labels.nonTaxableIncomeCategories}
                         </a>
                     </li>
                 </ul>

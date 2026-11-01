@@ -25,3 +25,6 @@ dist-ssr
 *.sw?
 /.claude/settings.local.json
 build
+
+.claude
+.codex

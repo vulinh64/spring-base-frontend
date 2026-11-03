@@ -7,6 +7,7 @@ import type {
   BasicPostResponse,
   PostRevisionResponse,
   PostCreationRequest,
+  PostEditRequest,
 } from "@/types";
 
 export const postApi = {
@@ -26,8 +27,8 @@ export const postApi = {
     });
   },
 
-  getByIdentity(identity: string) {
-    return apiClient.get<SinglePostResponse>(`/post/${identity}`);
+  getByIdentity(identity: string, fresh = false) {
+    return apiClient.get<SinglePostResponse>(`/post/${identity}`, fresh ? { params: { _fresh: Date.now() }, headers: { "Cache-Control": "no-cache" } } : undefined);
   },
 
   getRevisions(id: string, pageable?: Pageable) {
@@ -40,7 +41,7 @@ export const postApi = {
     return apiClient.post<BasicPostResponse>("/post", request);
   },
 
-  edit(postId: string, request: PostCreationRequest) {
+  edit(postId: string, request: PostEditRequest) {
     return apiClient.patch<void>(`/post/${postId}`, request);
   },
 

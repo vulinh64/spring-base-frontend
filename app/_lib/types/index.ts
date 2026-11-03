@@ -8,6 +8,7 @@ export type {
   BasicPostResponse,
   PostRevisionResponse,
   PostCreationRequest,
+  PostEditRequest,
 } from "./post";
 export type { SingleCommentResponse, CommentResponse, NewCommentRequest } from "./comment";
 export type { UserRole, UserBasicResponse } from "./user";

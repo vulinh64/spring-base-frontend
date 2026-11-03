@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type ReactNode, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useCategories } from "@/hooks/useCategories";
 import { useSessionDraft } from "@/hooks/useSessionDraft";
@@ -11,7 +11,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { findDuplicateHeadingAnchorIds } from "@/utils/slugify";
 import type { PostCreationRequest } from "@/types";
 
-interface InitialValues {
+export interface InitialValues {
   title: string;
   excerpt: string;
   slug: string;
@@ -29,6 +29,9 @@ interface PostEditorFormProps {
   onSubmit: (request: PostCreationRequest) => void;
   isPending: boolean;
   error: string | null;
+  saveBlocked?: boolean;
+  draftMetadata?: Record<string, unknown>;
+  comparison?: (draft: InitialValues) => ReactNode;
 }
 
 export function PostEditorForm({
@@ -40,6 +43,9 @@ export function PostEditorForm({
   onSubmit,
   isPending,
   error,
+  saveBlocked = false,
+  draftMetadata,
+  comparison,
 }: PostEditorFormProps) {
   const router = useRouter();
   const { data: categories } = useCategories({ size: 100 });
@@ -56,7 +62,7 @@ export function PostEditorForm({
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // Snapshot of field values at mount — used to determine if anything has changed
+  // Snapshot of field values at mount â€” used to determine if anything has changed
   const [baseline] = useState({ title, excerpt, slug, postContent, categoryId, tagsInput });
 
   const isDirty =
@@ -79,11 +85,12 @@ export function PostEditorForm({
   }, [isDirty]);
 
   useEffect(() => {
-    updateDraft({ title, excerpt, slug, postContent, categoryId, tagsInput });
-  }, [title, excerpt, slug, postContent, categoryId, tagsInput, updateDraft]);
+    updateDraft({ title, excerpt, slug, postContent, categoryId, tagsInput, ...draftMetadata });
+  }, [title, excerpt, slug, postContent, categoryId, tagsInput, updateDraft, draftMetadata]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (isPending || saveBlocked) return;
     const duplicateHeadingAnchorIds = findDuplicateHeadingAnchorIds(postContent);
 
     if (duplicateHeadingAnchorIds.length > 0) {
@@ -186,6 +193,8 @@ export function PostEditorForm({
           <ErrorBanner message={(validationError ?? error)!} />
         </div>
       )}
+      {comparison?.({ title, excerpt, slug, postContent, categoryId, tagsInput })}
+      <fieldset disabled={isPending}>
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
@@ -255,7 +264,7 @@ export function PostEditorForm({
         <div className="flex gap-3">
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || saveBlocked}
             className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
             {isPending ? pendingLabel : submitLabel}
@@ -276,6 +285,7 @@ export function PostEditorForm({
           </button>
         </div>
       </form>
+      </fieldset>
     </div>
   );
 }

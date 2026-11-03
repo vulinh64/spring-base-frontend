@@ -24,6 +24,7 @@ export interface PrefetchPostProjection {
 }
 
 export interface SinglePostResponse {
+  version: number;
   id: string;
   title: string;
   excerpt: string;
@@ -73,4 +74,8 @@ export interface PostCreationRequest {
   slug: string;
   categoryId?: string;
   tags?: string[];
+}
+
+export interface PostEditRequest extends PostCreationRequest {
+  version: number;
 }

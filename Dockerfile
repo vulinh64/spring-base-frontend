@@ -1,7 +1,7 @@
 ARG AUTH_URL=http://localhost:8080
 ARG BACKEND_URL=http://localhost:8088
 
-FROM node:22-alpine AS builder
+FROM node:26.13.0-alpine3.24 AS builder
 
 ARG AUTH_URL
 ARG BACKEND_URL
@@ -17,7 +17,7 @@ RUN npm ci --ignore-scripts
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine AS runner
+FROM node:26.13.0-alpine3.24 AS runner
 
 ARG AUTH_URL
 ARG BACKEND_URL

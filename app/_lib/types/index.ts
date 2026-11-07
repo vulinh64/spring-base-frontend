@@ -1,4 +1,5 @@
 export type { GenericResponse, Page, Pageable } from "./common";
+export type { CsrfTokenResponse } from "./auth";
 export type { CategoryResponse, CategoryCreationRequest, CategorySearchRequest } from "./category";
 export type {
   AuthorResponse,
